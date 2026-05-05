@@ -903,13 +903,13 @@ function renderDashboard() {
   const myPaid = groupData.expenses.filter(e=>e.paidBy===me.name).reduce((s,e)=>s+(+e.amount||0),0);
 
   document.getElementById('hero-stats').innerHTML = `
-    <div class="hero-card">
-      <div class="hc-label">Total Spent</div>
+    <div class="hero-card" onclick="switchTab('expenses')" style="cursor:pointer">
+      <div class="hc-label">Total Spent ↗</div>
       <div class="hc-val">₹${fmt(totalSpent)}</div>
       <div class="hc-sub">${groupData.expenses.length} expenses · ${members.length} members</div>
     </div>
-    <div class="hero-card">
-      <div class="hc-label">You Paid</div>
+    <div class="hero-card" onclick="switchTabFiltered('expenses','','${me.name}')" style="cursor:pointer">
+      <div class="hc-label">You Paid ↗</div>
       <div class="hc-val" style="color:var(--accent2)">₹${fmt(myPaid)}</div>
       <div class="hc-sub">${totalSpent>0?((myPaid/totalSpent)*100).toFixed(0):0}% of total</div>
     </div>
@@ -930,10 +930,10 @@ function renderDashboard() {
     const cls = b>0.01?'pos':b<-0.01?'neg':'zero';
     const lbl = b>0.01?'gets back':b<-0.01?'owes':'settled';
     const c = COLORS[Math.abs(hash(n))%COLORS.length];
-    return `<div class="bal-card">
+    return `<div class="bal-card" onclick="switchTabFiltered('expenses','','${n}')" style="cursor:pointer">
       <div class="bc-name" style="color:${c}">${n}</div>
       <div class="bc-amt ${cls}">₹${fmt(Math.abs(b))}</div>
-      <div class="bc-lbl ${cls}">${lbl}</div>
+      <div class="bc-lbl ${cls}">${lbl} ↗</div>
     </div>`;
   }).join('');
   document.getElementById('balance-grid').innerHTML = bgHtml || '<div class="empty" style="padding:16px">No data yet</div>';
@@ -952,10 +952,10 @@ function renderDashboard() {
     const c = COLORS[Math.abs(hash(n))%COLORS.length];
     const pct = (amt/maxPaid*100).toFixed(1);
     const share = totalSpent>0?((amt/totalSpent)*100).toFixed(0):0;
-    return `<div class="paid-row">
+    return `<div class="paid-row" onclick="switchTabFiltered('expenses','','${n}')" style="cursor:pointer">
       <div class="pr-av" style="background:${c}">${n[0].toUpperCase()}</div>
       <div class="pr-info">
-        <div class="pr-name"><span>${n}</span><span>₹${fmt(amt)}</span></div>
+        <div class="pr-name"><span>${n}</span><span>₹${fmt(amt)} ↗</span></div>
         <div class="paid-bar"><div class="paid-fill" style="width:${pct}%;background:${c}"></div></div>
         <div class="pr-share">${share}% of total · ${groupData.expenses.filter(e=>e.paidBy===n).length} expenses</div>
       </div>
@@ -977,12 +977,12 @@ function renderDashboard() {
     const icon = catIcons[cat] || '📦';
     const pct = (data.amount/maxCat*100).toFixed(1);
     const share = totalSpent>0?((data.amount/totalSpent)*100).toFixed(0):0;
-    return `<div class="cat-row">
+    return `<div class="cat-row" onclick="switchTabFiltered('expenses','${cat}','')" style="cursor:pointer">
       <div class="cat-icon">${icon}</div>
       <div class="cat-info">
         <div class="cat-name-row">
           <span class="cn">${cat.replace(/^\S+\s/,'')}</span>
-          <span class="ca">₹${fmt(data.amount)} <span style="font-size:10px;color:var(--muted2);font-family:'DM Sans'">(${share}%)</span></span>
+          <span class="ca">₹${fmt(data.amount)} <span style="font-size:10px;color:var(--muted2);font-family:'DM Sans'">(${share}%) ↗</span></span>
         </div>
         <div class="cat-bar"><div class="cat-fill" style="width:${pct}%"></div></div>
       </div>
@@ -998,7 +998,7 @@ function renderDashboard() {
         const isMe = s.from===me.name||s.to===me.name;
         const fromC = COLORS[Math.abs(hash(s.from))%COLORS.length];
         const toC   = COLORS[Math.abs(hash(s.to))%COLORS.length];
-        return `<div class="settle-card">
+        return `<div class="settle-card" onclick="switchTab('repay')" style="cursor:pointer">
           <div class="settle-top">
             <div class="settle-flow">
               <div class="avatar" style="background:${fromC};width:28px;height:28px;font-size:11px;color:#000">${s.from[0]}</div>
@@ -1611,6 +1611,22 @@ function switchTab(name) {
   if (name==='add'||name==='repay') { populateDropdowns(); renderSplitRows(); }
   if (name==='repay') renderRepay();
   if (name==='expenses') renderExpensesTab();
+}
+
+  function switchTabFiltered(tabName, cat, person) {
+  switchTab(tabName);
+  // Apply filters after a tiny delay so the tab content renders first
+  setTimeout(() => {
+    if (cat) {
+      const catSel = document.getElementById('exp-filter-cat');
+      if (catSel) catSel.value = cat;
+    }
+    if (person) {
+      const pSel = document.getElementById('exp-filter-person');
+      if (pSel) pSel.value = person;
+    }
+    renderExpensesTab();
+  }, 50);
 }
 
 function openCreateGroup() { document.getElementById('create-modal').style.display='flex'; }
