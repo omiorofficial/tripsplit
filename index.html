@@ -675,7 +675,7 @@ function showApp() {
   }
   goHome();
   if (refreshTimer) clearInterval(refreshTimer);
-  refreshTimer = setInterval(() => { if (currentGroup) loadGroupData(); }, 30000);
+  refreshTimer = setInterval(() => { if (currentGroup) loadGroupData(); }, 120000);
 }
 
 function goHome() {
