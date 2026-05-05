@@ -598,7 +598,11 @@ window.onload = () => {
   ADMIN_PIN  = '4447';    // ← change freely, no redeploy needed
 
   const saved = localStorage.getItem('ts_user');
-  if (saved) { me = JSON.parse(saved); showApp(); }
+  if (saved) {
+    me = JSON.parse(saved);
+    me.isAdmin = (me.name === ADMIN_NAME && me.pin === ADMIN_PIN); // ← ADD THIS LINE
+    showApp();
+  }
 };
 
 // ─── AUTH ─────────────────────────────────────────────────
@@ -608,8 +612,7 @@ async function doLogin() {
   if (!name) { toast('Enter your name','err'); return; }
   if (pin.length !== 4 || isNaN(pin)) { toast('PIN must be 4 digits','err'); return; }
 
-  // ← Local check — no server call, no redeploy ever needed
-  const isAdmin = (name === ADMIN_NAME && pin === ADMIN_PIN);
+  const isAdmin = (name === ADMIN_NAME && pin === ADMIN_PIN); // boolean, not string
 
   me = { name, pin, color: COLORS[Math.abs(hash(name)) % COLORS.length], isAdmin };
   localStorage.setItem('ts_user', JSON.stringify(me));
