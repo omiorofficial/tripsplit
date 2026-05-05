@@ -588,17 +588,17 @@ let groupData = {};    // { expenses:[], repayments:[], members:[] }
 let splitType = 'equal';
 let pendingSettle = null;
 let refreshTimer = null;
+  let ADMIN_NAME = 'Gaurav';
+let ADMIN_PIN  = '4447';
 
 // ─── BOOT ─────────────────────────────────────────────────
 window.onload = () => {
-  // ⬇️ PASTE YOUR APPS SCRIPT URL HERE BEFORE UPLOADING TO GITHUB
-  
-  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  GAS_URL = 'https://script.google.com/macros/s/.../exec';
+  ADMIN_NAME = 'Gaurav';   // ← change freely, no redeploy needed
+  ADMIN_PIN  = '4447';    // ← change freely, no redeploy needed
+
   const saved = localStorage.getItem('ts_user');
-  if (saved) {
-    me = JSON.parse(saved);
-    showApp();
-  }
+  if (saved) { me = JSON.parse(saved); showApp(); }
 };
 
 // ─── AUTH ─────────────────────────────────────────────────
@@ -607,11 +607,11 @@ async function doLogin() {
   const pin  = document.getElementById('lp').value.trim();
   if (!name) { toast('Enter your name','err'); return; }
   if (pin.length !== 4 || isNaN(pin)) { toast('PIN must be 4 digits','err'); return; }
-  me = { name, pin, color: COLORS[Math.abs(hash(name)) % COLORS.length], isAdmin: false };
-  try {
-    const res = await gas('checkAdmin', { name, pin });
-    me.isAdmin = res.isAdmin;
-  } catch(e) {}
+
+  // ← Local check — no server call, no redeploy ever needed
+  const isAdmin = (name === ADMIN_NAME && pin === ADMIN_PIN);
+
+  me = { name, pin, color: COLORS[Math.abs(hash(name)) % COLORS.length], isAdmin };
   localStorage.setItem('ts_user', JSON.stringify(me));
   showApp();
 }
