@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#5b5fcf">
+<meta name="mobile-web-app-capable" content="yes">
 <title>TripSplit</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!-- Preconnect to speed up Google Fonts DNS + TLS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Load fonts non-blocking with font-display=swap -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap"></noscript>
 <style>
 :root {
   --bg:#f0f0f7;
@@ -24,6 +31,9 @@
   --success:#2ecc71;
   --r:16px; --r2:12px; --r3:8px;
 }
+/* Ensure font-display swap so text renders immediately with fallbacks */
+@font-face { font-family:'Syne'; font-display:swap; }
+@font-face { font-family:'DM Sans'; font-display:swap; }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 a{color:inherit;text-decoration:none;}
@@ -107,6 +117,8 @@ a{color:inherit;text-decoration:none;}
 .sec-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;color:var(--text);}
 .sec-title .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 .pos{color:var(--success);} .neg{color:var(--danger);} .zero{color:var(--muted2);}
+/* CSS containment speeds up layout of list items */
+.paid-row,.cat-row,.hist-item,.exp-card,.settle-card,.group-card{contain:layout style;}
 
 /* Hero stats */
 .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
@@ -254,6 +266,7 @@ a{color:inherit;text-decoration:none;}
 .loading{text-align:center;padding:44px 20px;color:var(--muted2);}
 .spin{display:inline-block;width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
 .empty{text-align:center;padding:44px 20px;color:var(--muted2);font-size:13px;}
 .empty .ei{font-size:32px;margin-bottom:8px;}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:11px 18px;font-size:13px;z-index:9999;transition:transform .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(91,95,207,0.15);color:var(--text);}
@@ -648,23 +661,25 @@ let currentGroup = null;
 let groupData = {};
 let splitType = 'equal';
 let pendingSettle = null;
-let refreshTimer = null;
 let ADMIN_NAME = 'Gaurav123';
 let ADMIN_PIN  = '4447';
 
 // ─── BOOT ─────────────────────────────────────────────────
-window.onload = () => {
+// DOMContentLoaded fires before images/fonts — much faster than window.onload
+document.addEventListener('DOMContentLoaded', () => {
   GAS_URL = 'https://script.google.com/macros/s/AKfycbysc6vjp0tbNhVcPEeVhgRPRNuv33n5FGFh-ibhbA2XU3aCqBDnmQ9nxBK8su9504tIRQ/exec';
   ADMIN_NAME = 'Gaurav123';
   ADMIN_PIN  = '4447';
 
   const saved = localStorage.getItem('ts_user');
   if (saved) {
-    me = JSON.parse(saved);
-    me.isAdmin = (me.name === ADMIN_NAME && me.pin === ADMIN_PIN);
-    showApp();
+    try {
+      me = JSON.parse(saved);
+      me.isAdmin = (me.name === ADMIN_NAME && me.pin === ADMIN_PIN);
+      showApp();
+    } catch(e) { localStorage.removeItem('ts_user'); }
   }
-};
+});
 
 // ─── AUTH ─────────────────────────────────────────────────
 async function doLogin() {
@@ -681,9 +696,14 @@ async function doLogin() {
 }
 
 function logout() {
+  // Clear all cached data for this user
+  if (me) {
+    localStorage.removeItem(CACHE_KEY_GROUPS());
+    // Clear any cached group data
+    Object.keys(localStorage).filter(k => k.startsWith('ts_gdata_')).forEach(k => localStorage.removeItem(k));
+  }
   localStorage.removeItem('ts_user');
   me = null;
-  if (refreshTimer) clearInterval(refreshTimer);
   document.getElementById('app').style.display = 'none';
   document.getElementById('splash').style.display = 'flex';
 }
@@ -723,8 +743,6 @@ function showApp() {
     document.getElementById('admin-tab').style.display = '';
   }
   goHome();
-  if (refreshTimer) clearInterval(refreshTimer);
-  refreshTimer = setInterval(() => { if (currentGroup) loadGroupData(); }, 120000);
 }
 
 function goHome() {
@@ -736,19 +754,49 @@ function goHome() {
 }
 
 // ─── GROUPS ───────────────────────────────────────────────
+const CACHE_KEY_GROUPS = () => `ts_groups_${me.name}`;
+const CACHE_KEY_GDATA  = (id) => `ts_gdata_${id}`;
+
 async function loadGroups() {
-  document.getElementById('groups-loading').style.display = 'block';
-  document.getElementById('groups-list').style.display = 'none';
+  const groupsListEl = document.getElementById('groups-list');
+  document.getElementById('groups-loading').style.display = 'none';
+  groupsListEl.style.display = 'block';
+
+  // 1. Render from cache instantly (stale-while-revalidate)
+  const cached = localStorage.getItem(CACHE_KEY_GROUPS());
+  if (cached) {
+    try {
+      groups = JSON.parse(cached);
+      renderGroups(true); // true = is stale/cached
+    } catch(e) { localStorage.removeItem(CACHE_KEY_GROUPS()); }
+  } else {
+    // No cache: show skeletons while fetching
+    const skeletonCard = `<div class="group-card" style="pointer-events:none">
+      <div class="gc-left"><div class="gc-icon" style="background:#e8e8f0;animation:shimmer 1.2s infinite"></div>
+      <div class="gc-info">
+        <div style="width:120px;height:13px;background:#e8e8f0;border-radius:4px;margin-bottom:7px;animation:shimmer 1.2s infinite"></div>
+        <div style="width:80px;height:11px;background:#e8e8f0;border-radius:4px;animation:shimmer 1.2s infinite"></div>
+      </div></div>
+      <div class="gc-right"><div style="width:55px;height:15px;background:#e8e8f0;border-radius:4px;animation:shimmer 1.2s infinite"></div></div>
+    </div>`;
+    groupsListEl.innerHTML = skeletonCard.repeat(3);
+  }
+
+  // 2. Fetch fresh data in background
   try {
     const res = await gas('getGroups', { userName: me.name });
     groups = res.groups || [];
-    renderGroups();
+    localStorage.setItem(CACHE_KEY_GROUPS(), JSON.stringify(groups));
+    renderGroups(false);
   } catch(e) {
-    document.getElementById('groups-loading').innerHTML = `<div style="color:var(--danger);font-size:13px">Failed to load. Check your Apps Script URL.</div>`;
+    if (!cached) {
+      groupsListEl.innerHTML = `<div style="color:var(--danger);font-size:13px;padding:20px;text-align:center">Failed to load.<br><button class="btn btn-sm" style="width:auto;margin-top:12px" onclick="loadGroups()">Retry</button></div>`;
+    }
+    // If we had cache, silently keep showing it — no error toast
   }
 }
 
-function renderGroups() {
+function renderGroups(isStale = false) {
   document.getElementById('groups-loading').style.display = 'none';
   document.getElementById('groups-list').style.display = 'block';
   const el = document.getElementById('groups-list');
@@ -771,7 +819,7 @@ function renderGroups() {
         <div class="gc-members">${(g.members||[]).length} members</div>
       </div>
     </div>`;
-  }).join('');
+  }).join('') + (isStale ? `<div style="text-align:center;font-size:11px;color:var(--muted);padding:8px 0">Syncing…</div>` : '');
 }
 
 async function openGroup(gid) {
@@ -792,19 +840,42 @@ async function openGroup(gid) {
 
 async function loadGroupData() {
   if (!currentGroup) return;
-  document.getElementById('dash-loading').style.display = 'block';
-  document.getElementById('dash-content').style.display = 'none';
+
+  // 1. Render from cache instantly if available
+  const cached = localStorage.getItem(CACHE_KEY_GDATA(currentGroup.id));
+  if (cached) {
+    try {
+      groupData = JSON.parse(cached);
+      currentGroup.members = groupData.members || [];
+      document.getElementById('dash-loading').style.display = 'none';
+      document.getElementById('dash-content').style.display = 'block';
+      renderDashboard();
+      populateDropdowns();
+      requestAnimationFrame(() => { renderHistory(); renderRepay(); });
+      if (me.isAdmin) renderAdminMembers();
+    } catch(e) { localStorage.removeItem(CACHE_KEY_GDATA(currentGroup.id)); }
+  } else {
+    document.getElementById('dash-loading').style.display = 'block';
+    document.getElementById('dash-content').style.display = 'none';
+  }
+
+  // 2. Fetch fresh in background (always — triggered by mutation or first open)
   try {
     const res = await gas('getGroupData', { groupId: currentGroup.id });
     groupData = res.data || { expenses:[], repayments:[], members:[] };
     currentGroup.members = groupData.members || [];
+    localStorage.setItem(CACHE_KEY_GDATA(currentGroup.id), JSON.stringify(groupData));
+    document.getElementById('dash-loading').style.display = 'none';
+    document.getElementById('dash-content').style.display = 'block';
     renderDashboard();
-    renderHistory();
-    renderRepay();
     populateDropdowns();
     document.getElementById('last-upd').textContent = 'Updated ' + new Date().toLocaleTimeString();
     if (me.isAdmin) renderAdminMembers();
-  } catch(e) { toast('Error loading data: '+e.message,'err'); }
+    requestAnimationFrame(() => { renderHistory(); renderRepay(); });
+  } catch(e) {
+    if (!cached) toast('Error loading data: '+e.message,'err');
+    // If we had cache, silently keep showing it
+  }
 }
 
 // ─── BALANCE ENGINE ───────────────────────────────────────
@@ -1407,6 +1478,7 @@ async function doDeleteTrip() {
   closeModal();
   try {
     await gas('deleteGroup', { groupId: currentGroup.id, deletedBy: me.name });
+    localStorage.removeItem(CACHE_KEY_GDATA(currentGroup.id));
     toast('Trip deleted','ok');
     goHome();
   } catch(e) { toast('Error: '+e.message,'err'); }
@@ -1555,9 +1627,11 @@ function switchTab(name) {
   const idx=tabs.indexOf(name);
   document.querySelectorAll('.tab')[idx]?.classList.add('active');
   document.getElementById('tab-'+name)?.classList.add('active');
+  // Lazy render each tab only when visited
   if (name==='add'||name==='repay') { populateDropdowns(); renderSplitRows(); }
   if (name==='repay') renderRepay();
   if (name==='expenses') renderExpensesTab();
+  if (name==='history') renderHistory();
 }
 
 function switchTabFiltered(tabName, cat, person) {
@@ -1598,10 +1672,23 @@ function hash(s){ let h=0; for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(
 // ─── GAS CALL ─────────────────────────────────────────────
 async function gas(action, payload={}) {
   if (!GAS_URL) { toast('Apps Script URL not set','err'); throw new Error('No URL'); }
-  const res = await fetch(GAS_URL, { method:'POST', body:JSON.stringify({action,...payload}) });
-  const json = await res.json();
-  if (!json.ok) throw new Error(json.error||'Server error');
-  return json;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15000); // 15s timeout
+  try {
+    const res = await fetch(GAS_URL, {
+      method:'POST',
+      body:JSON.stringify({action,...payload}),
+      signal: ctrl.signal
+    });
+    clearTimeout(timer);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error||'Server error');
+    return json;
+  } catch(e) {
+    clearTimeout(timer);
+    if (e.name === 'AbortError') throw new Error('Request timed out. Check your connection.');
+    throw e;
+  }
 }
 </script>
 </body>
