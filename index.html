@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#5b5fcf">
 <meta name="mobile-web-app-capable" content="yes">
 <title>TripSplit</title>
+<!-- QR Code library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <!-- Preconnect to speed up Google Fonts DNS + TLS -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -286,6 +288,73 @@ a{color:inherit;text-decoration:none;}
 .back-btn:hover{color:var(--accent);}
 .info-banner{background:#eef2ff;border:1px solid #c7d0f8;border-radius:var(--r2);padding:12px 16px;font-size:12px;color:#4a56b8;margin-bottom:16px;line-height:1.7;}
 
+/* ── PAYMENT METHOD TOGGLE ── */
+.pay-method-row{display:flex;gap:8px;margin-bottom:16px;}
+.pay-method-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 8px;border:1.5px solid var(--border);border-radius:var(--r2);font-size:13px;font-weight:500;cursor:pointer;background:var(--surface2);color:var(--muted2);transition:all .2s;font-family:'DM Sans',sans-serif;}
+.pay-method-btn.active{border-color:var(--accent);background:#eef2ff;color:var(--accent);font-weight:700;}
+.pay-method-btn .pm-icon{font-size:18px;}
+
+/* ── UPI QR SECTION ── */
+.upi-section{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:14px;}
+.upi-section h4{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin-bottom:12px;}
+.upi-qr-wrap{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;}
+.upi-qr-box{background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;align-items:center;justify-content:center;min-width:120px;}
+.upi-qr-box canvas,.upi-qr-box img{display:block;}
+.upi-qr-info{flex:1;min-width:140px;}
+.upi-qr-info .qi-label{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.upi-qr-info .qi-val{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;word-break:break-all;}
+.upi-qr-info .qi-amt{font-size:22px;font-weight:800;font-family:'Syne',sans-serif;color:var(--accent);}
+.upi-id-setup{font-size:12px;color:var(--muted2);padding:12px;text-align:center;line-height:1.6;}
+.upi-id-setup a{color:var(--accent);cursor:pointer;text-decoration:underline;}
+.copy-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid var(--border2);border-radius:var(--r3);padding:4px 10px;font-size:11px;color:var(--muted2);cursor:pointer;transition:all .2s;margin-top:4px;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── PENDING CONFIRMATIONS ── */
+.pending-section{margin-bottom:20px;}
+.pending-badge{display:inline-flex;align-items:center;gap:5px;background:#fff3e0;border:1.5px solid #ff9800;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#e65100;margin-left:8px;}
+.pending-card{background:var(--surface);border:1.5px solid #ffd54f;border-radius:var(--r);padding:0;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 12px rgba(255,193,7,0.15);}
+.pending-card-header{background:linear-gradient(135deg,#fff8e1,#fff3cd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.pending-card-header .pc-title{font-size:13px;font-weight:600;color:var(--text);}
+.pending-card-header .pc-badge{background:#ff9800;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:.3px;}
+.pending-card-header .pc-badge.receiver{background:#2196f3;}
+.pending-card-body{padding:12px 16px;}
+.pending-flow{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.pending-flow .pf-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+.pending-flow .pf-arrow{color:var(--muted2);}
+.pending-flow .pf-amt{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--accent2);margin-left:auto;}
+.pending-meta{font-size:11px;color:var(--muted2);margin-bottom:10px;}
+.pending-method-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;margin-bottom:8px;}
+.pending-method-badge.upi{background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;}
+.pending-method-badge.cash{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;}
+.pending-actions{display:flex;gap:8px;}
+.btn-confirm{flex:1;background:var(--success);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:var(--r2);padding:9px;cursor:pointer;transition:opacity .2s;}
+.btn-confirm:hover{opacity:.85;}
+.btn-reject{flex:1;background:none;border:1.5px solid var(--danger);color:var(--danger);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;border-radius:var(--r2);padding:9px;cursor:pointer;transition:all .2s;}
+.btn-reject:hover{background:#fff0f0;}
+.confirmed-badge{display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;border:1px solid #a5d6a7;color:#2e7d32;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+.rejected-badge{display:inline-flex;align-items:center;gap:4px;background:#fff0f0;border:1px solid #ffcdd2;color:var(--danger);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+.pending-qr-row{display:flex;gap:12px;align-items:center;background:#f8f9ff;border-radius:var(--r2);padding:10px;margin-bottom:10px;border:1px solid #e8eaff;}
+.pending-qr-row .pqr-qr{background:#fff;border-radius:8px;padding:6px;border:1px solid var(--border);flex-shrink:0;}
+.pending-qr-row .pqr-info{flex:1;}
+.pending-qr-row .pqr-upi{font-size:12px;color:var(--muted2);margin-bottom:4px;}
+.pending-qr-row .pqr-amt{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent);}
+
+/* ── UPI PROFILE SETUP ── */
+.upi-profile-card{background:#f0f4ff;border:1.5px dashed #b0bcf0;border-radius:var(--r2);padding:14px;margin-bottom:14px;}
+.upi-profile-card .upc-title{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.upi-profile-card .upc-sub{font-size:12px;color:var(--muted2);margin-bottom:10px;line-height:1.5;}
+.upi-profile-row{display:flex;gap:8px;align-items:center;}
+.upi-profile-row input{flex:1;background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;font-size:13px;color:var(--text);outline:none;}
+.upi-profile-row input:focus{border-color:var(--accent);}
+
+/* ── REPAY TAB OVERRIDES ── */
+.repay-pending-banner{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1.5px solid #ffd54f;border-radius:var(--r2);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;}
+.repay-pending-banner:hover{border-color:#ff9800;}
+.rpb-icon{font-size:24px;flex-shrink:0;}
+.rpb-text .rpb-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#e65100;}
+.rpb-text .rpb-sub{font-size:12px;color:#bf360c;}
+.repay-section-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin:16px 0 10px 0;display:flex;align-items:center;gap:6px;}
+
 /* ── MOBILE RESPONSIVE ── */
 @media(max-width:480px){
   .topbar{padding:10px 12px;}
@@ -432,6 +501,13 @@ a{color:inherit;text-decoration:none;}
         <div class="cat-list" id="cat-list"></div>
         <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Who Pays Whom</div>
         <div id="settlements-list"></div>
+        <div id="dash-pending-section" style="display:none">
+          <div class="sec-title" style="margin-bottom:10px;margin-top:20px">
+            <span class="dot" style="background:#ff9800"></span>Pending Confirmations
+            <span class="pending-badge" id="dash-pending-count">0</span>
+          </div>
+          <div id="dash-pending-list"></div>
+        </div>
       </div>
     </div>
 
@@ -506,20 +582,65 @@ a{color:inherit;text-decoration:none;}
     <!-- REPAYMENT -->
     <div class="tab-content" id="tab-repay">
       <div class="back-btn" onclick="goHome()">← All Trips</div>
+
+      <!-- Pending confirmations for me (as receiver) -->
+      <div id="repay-pending-section" style="display:none">
+        <div class="repay-section-title">
+          <span>⏳</span> Awaiting Your Confirmation
+          <span class="pending-badge" id="repay-pending-count">0</span>
+        </div>
+        <div id="repay-pending-list"></div>
+      </div>
+
       <div class="repay-card">
+        <!-- UPI ID setup strip -->
+        <div class="upi-profile-card" id="upi-setup-card">
+          <div class="upc-title">💳 Your UPI ID (optional)</div>
+          <div class="upc-sub">Set your UPI ID so others can scan your QR to pay you directly.</div>
+          <div class="upi-profile-row">
+            <input type="text" id="my-upi-id" placeholder="yourname@upi or phone@bank" oninput="saveUpiId()">
+          </div>
+        </div>
+
         <div class="sec-title" style="margin-bottom:14px"><span class="dot"></span>Outstanding Debts</div>
         <div id="debts-list"></div>
+
         <div class="repay-form">
           <h3>Record a Repayment</h3>
+
+          <!-- Payment method -->
+          <div style="font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Payment Method</div>
+          <div class="pay-method-row">
+            <button class="pay-method-btn active" id="pm-cash" onclick="setPayMethod('cash')">
+              <span class="pm-icon">💵</span> Cash
+            </button>
+            <button class="pay-method-btn" id="pm-upi" onclick="setPayMethod('upi')">
+              <span class="pm-icon">📱</span> UPI
+            </button>
+          </div>
+
           <div class="form-row">
-            <div class="field"><label>From (Payer)</label><select id="rep-from"></select></div>
-            <div class="field"><label>To (Receiver)</label><select id="rep-to"></select></div>
+            <div class="field"><label>From (Payer)</label><select id="rep-from" onchange="onRepayFromChange()"></select></div>
+            <div class="field"><label>To (Receiver)</label><select id="rep-to" onchange="onRepayToChange()"></select></div>
           </div>
-          <div class="inline-row">
-            <div class="field"><label>Amount (₹)</label><input type="number" id="rep-amount" placeholder="0" min="0" step="0.01"></div>
-            <div class="field"><label>Note (optional)</label><input type="text" id="rep-note" placeholder="UPI / Cash"></div>
-            <button class="btn" style="width:auto;padding:10px 18px;white-space:nowrap;align-self:flex-end" onclick="submitRepayment()">Record</button>
+          <div class="form-row">
+            <div class="field"><label>Amount (₹)</label><input type="number" id="rep-amount" placeholder="0" min="0" step="0.01" oninput="updateRepayQR()"></div>
+            <div class="field"><label>Note (optional)</label><input type="text" id="rep-note" placeholder="Transaction ID / Remark"></div>
           </div>
+
+          <!-- UPI QR Section -->
+          <div id="upi-qr-section" style="display:none">
+            <div class="upi-section">
+              <h4>📲 Receiver's UPI QR</h4>
+              <div id="upi-qr-content"></div>
+            </div>
+          </div>
+
+          <div id="repay-confirm-note" class="info-banner" style="display:none"></div>
+
+          <button class="btn" style="margin-top:6px" onclick="submitRepayment()">
+            <span id="repay-btn-label">Record Payment</span>
+          </button>
         </div>
       </div>
     </div>
@@ -543,6 +664,14 @@ a{color:inherit;text-decoration:none;}
         <div class="add-member-row">
           <input type="text" id="new-member" placeholder="Add member name...">
           <button class="btn btn-sm" style="width:auto" onclick="addMember()">Add</button>
+        </div>
+      </div>
+      <div class="admin-card">
+        <h3>💳 Your UPI ID</h3>
+        <div style="font-size:13px;color:var(--muted2);margin-bottom:12px;line-height:1.6">Your UPI ID is used to generate QR codes so group members can pay you directly.</div>
+        <div class="upi-profile-row">
+          <input type="text" id="admin-upi-id" placeholder="yourname@upi or 9876543210@paytm" oninput="saveUpiId()">
+          <button class="btn btn-sm" style="width:auto" onclick="toast('UPI ID saved!','ok')">Save</button>
         </div>
       </div>
       <div class="admin-card">
@@ -663,6 +792,25 @@ let splitType = 'equal';
 let pendingSettle = null;
 let ADMIN_NAME = 'Gaurav123';
 let ADMIN_PIN  = '4447';
+let payMethod = 'cash'; // 'cash' | 'upi'
+let _repayQRInstance = null;
+
+// ─── PENDING REPAYMENTS HELPERS ─────────────────────────────
+// Stored per group in localStorage as: ts_pending_<groupId>
+// Each entry: { id, groupId, from, to, amount, note, method, upiId, timestamp, status, recordedBy }
+// status: 'pending' | 'confirmed' | 'rejected'
+
+function PENDING_KEY(gid) { return `ts_pending_${gid}`; }
+function UPI_KEY(name)     { return `ts_upi_${name}`; }
+
+function getPendingRepayments(gid) {
+  try { return JSON.parse(localStorage.getItem(PENDING_KEY(gid)) || '[]'); } catch(e) { return []; }
+}
+function savePendingRepayments(gid, arr) {
+  localStorage.setItem(PENDING_KEY(gid), JSON.stringify(arr));
+}
+function getUpiId(name) { return localStorage.getItem(UPI_KEY(name)) || ''; }
+function setUpiId(name, id) { localStorage.setItem(UPI_KEY(name), id); }
 
 // ─── BOOT ─────────────────────────────────────────────────
 // DOMContentLoaded fires before images/fonts — much faster than window.onload
@@ -742,6 +890,12 @@ function showApp() {
     document.getElementById('create-group-btn').style.display = '';
     document.getElementById('admin-tab').style.display = '';
   }
+  // Load saved UPI ID
+  const savedUpi = getUpiId(me.name);
+  const upiEl = document.getElementById('my-upi-id');
+  if (upiEl && savedUpi) upiEl.value = savedUpi;
+  const adminUpiEl = document.getElementById('admin-upi-id');
+  if (adminUpiEl && savedUpi) adminUpiEl.value = savedUpi;
   goHome();
 }
 
@@ -1211,19 +1365,159 @@ async function submitExpense() {
 }
 
 async function submitRepayment() {
-  const from = document.getElementById('rep-from').value;
-  const to   = document.getElementById('rep-to').value;
+  const from   = document.getElementById('rep-from').value;
+  const to     = document.getElementById('rep-to').value;
   const amount = parseFloat(document.getElementById('rep-amount').value);
-  const note = document.getElementById('rep-note').value.trim();
-  if (from===to) { toast('Payer and receiver must differ','err'); return; }
-  if (!amount||amount<=0) { toast('Enter valid amount','err'); return; }
+  const note   = document.getElementById('rep-note').value.trim();
+  if (from === to) { toast('Payer and receiver must differ','err'); return; }
+  if (!amount || amount <= 0) { toast('Enter valid amount','err'); return; }
+
+  const iAmSender   = (me.name === from);
+  const iAmReceiver = (me.name === to);
+
+  // If recorder is the receiver OR admin → direct commit (no confirmation needed)
+  if (iAmReceiver || me.isAdmin) {
+    try {
+      await gas('addRepayment',{groupId:currentGroup.id,from,to,amount,note:note||payMethod,addedBy:me.name});
+      toast('Repayment recorded!','ok');
+      clearRepayForm();
+      await loadGroupData();
+    } catch(e) { toast('Error: '+e.message,'err'); }
+    return;
+  }
+
+  // Recorder is the sender → create a pending entry awaiting receiver confirmation
+  const pending = getPendingRepayments(currentGroup.id);
+  const entry = {
+    id: 'PRP-'+Date.now(),
+    groupId: currentGroup.id,
+    from, to, amount, note,
+    method: payMethod,
+    upiId: getUpiId(to),
+    timestamp: new Date().toISOString(),
+    status: 'pending',
+    recordedBy: me.name
+  };
+  pending.push(entry);
+  savePendingRepayments(currentGroup.id, pending);
+  toast(`Payment sent for ${to}'s confirmation ⏳`,'ok');
+  clearRepayForm();
+  renderRepay();
+  renderPendingOnDashboard();
+}
+
+function clearRepayForm() {
+  document.getElementById('rep-amount').value = '';
+  document.getElementById('rep-note').value   = '';
+  document.getElementById('upi-qr-section').style.display = 'none';
+}
+
+// Accept a pending repayment (receiver confirms)
+async function acceptPending(id) {
+  const pending = getPendingRepayments(currentGroup.id);
+  const entry   = pending.find(p => p.id === id);
+  if (!entry) return;
+  // Only the receiver (or admin) can confirm
+  if (me.name !== entry.to && !me.isAdmin) { toast('Only the receiver can confirm','err'); return; }
   try {
-    await gas('addRepayment',{groupId:currentGroup.id,from,to,amount,note,addedBy:me.name});
-    toast('Repayment recorded!','ok');
-    document.getElementById('rep-amount').value='';
-    document.getElementById('rep-note').value='';
+    await gas('addRepayment',{groupId:currentGroup.id,from:entry.from,to:entry.to,amount:entry.amount,note:entry.note||entry.method,addedBy:me.name});
+    entry.status = 'confirmed';
+    savePendingRepayments(currentGroup.id, pending);
+    toast('Payment confirmed! ✅','ok');
     await loadGroupData();
+    renderRepay();
+    renderPendingOnDashboard();
   } catch(e) { toast('Error: '+e.message,'err'); }
+}
+
+// Reject a pending repayment
+function rejectPending(id) {
+  const pending = getPendingRepayments(currentGroup.id);
+  const entry   = pending.find(p => p.id === id);
+  if (!entry) return;
+  if (me.name !== entry.to && !me.isAdmin) { toast('Only the receiver can reject','err'); return; }
+  entry.status = 'rejected';
+  savePendingRepayments(currentGroup.id, pending);
+  toast('Payment rejected','err');
+  renderRepay();
+  renderPendingOnDashboard();
+}
+
+// UPI helpers
+function saveUpiId() {
+  const v1 = document.getElementById('my-upi-id')?.value.trim();
+  const v2 = document.getElementById('admin-upi-id')?.value.trim();
+  const val = v1 || v2 || '';
+  if (val) {
+    setUpiId(me.name, val);
+    // Sync both fields
+    if (document.getElementById('my-upi-id'))    document.getElementById('my-upi-id').value    = val;
+    if (document.getElementById('admin-upi-id')) document.getElementById('admin-upi-id').value = val;
+  }
+}
+
+function setPayMethod(m) {
+  payMethod = m;
+  document.getElementById('pm-cash').classList.toggle('active', m==='cash');
+  document.getElementById('pm-upi').classList.toggle('active',  m==='upi');
+  updateRepayQR();
+  updateRepayConfirmNote();
+}
+
+function onRepayFromChange() { updateRepayQR(); updateRepayConfirmNote(); }
+function onRepayToChange()   { updateRepayQR(); updateRepayConfirmNote(); }
+
+function updateRepayConfirmNote() {
+  const from = document.getElementById('rep-from')?.value;
+  const to   = document.getElementById('rep-to')?.value;
+  const noteEl = document.getElementById('repay-confirm-note');
+  const btnLbl = document.getElementById('repay-btn-label');
+  if (!from || !to || !noteEl) return;
+  const iAmSender   = (me.name === from);
+  const iAmReceiver = (me.name === to);
+  if (iAmReceiver || me.isAdmin) {
+    noteEl.style.display = 'none';
+    if (btnLbl) btnLbl.textContent = 'Record Payment';
+  } else {
+    noteEl.style.display = 'block';
+    noteEl.innerHTML = `<strong>⏳ Confirmation required:</strong> Since you are the payer, <strong>${to}</strong> will need to confirm this ${payMethod === 'upi' ? 'UPI ' : 'cash '}payment before it's recorded.`;
+    if (btnLbl) btnLbl.textContent = 'Send for Confirmation →';
+  }
+}
+
+function updateRepayQR() {
+  const to    = document.getElementById('rep-to')?.value;
+  const amt   = parseFloat(document.getElementById('rep-amount')?.value) || 0;
+  const sec   = document.getElementById('upi-qr-section');
+  if (!sec) return;
+  if (payMethod !== 'upi' || !to) { sec.style.display='none'; return; }
+  const receiverUpi = getUpiId(to);
+  const content     = document.getElementById('upi-qr-content');
+  if (!receiverUpi) {
+    content.innerHTML = `<div class="upi-id-setup">No UPI ID set for <strong>${to}</strong>.<br>Ask them to set it in their Repayment tab.</div>`;
+    sec.style.display = 'block';
+    return;
+  }
+  sec.style.display = 'block';
+  const upiStr = `upi://pay?pa=${encodeURIComponent(receiverUpi)}&pn=${encodeURIComponent(to)}${amt>0?`&am=${amt.toFixed(2)}`:''}`;
+  content.innerHTML = `
+    <div class="upi-qr-wrap">
+      <div class="upi-qr-box" id="repay-qr-canvas"></div>
+      <div class="upi-qr-info">
+        <div class="qi-label">Pay to</div>
+        <div class="qi-val">${receiverUpi}</div>
+        ${amt>0?`<div class="qi-amt">₹${fmt(amt)}</div>`:'<div style="font-size:12px;color:var(--muted2)">Enter amount above</div>'}
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('${receiverUpi}').then(()=>toast('UPI ID copied!','ok'))">📋 Copy UPI ID</button>
+      </div>
+    </div>`;
+  // Generate QR
+  if (_repayQRInstance) { try { _repayQRInstance.clear(); } catch(e) {} }
+  try {
+    _repayQRInstance = new QRCode(document.getElementById('repay-qr-canvas'), {
+      text: upiStr, width: 110, height: 110, colorDark:'#1a1a2e', colorLight:'#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(e) {}
 }
 
 async function createGroup() {
