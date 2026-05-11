@@ -1196,6 +1196,7 @@ function renderDashboard() {
         </div>`;
       }).join('');
   document.getElementById('settlements-list').innerHTML = sHtml;
+  renderPendingOnDashboard();
 }
 
 function fmt(n) { return (+n||0).toLocaleString('en-IN',{maximumFractionDigits:0}); }
@@ -1246,6 +1247,123 @@ function renderRepay() {
   document.getElementById('debts-list').innerHTML = !settles.length
     ? '<div class="empty" style="padding:16px 0"><div class="ei">✅</div>No debts!</div>'
     : settles.map(s=>`<div class="debt-row"><div class="dr-info"><strong>${s.from}</strong> owes <strong>${s.to}</strong></div><div class="dr-amt">₹${s.amount.toFixed(0)}</div></div>`).join('');
+
+  // Render pending confirmations where I am the receiver
+  if (!currentGroup) return;
+  const pending = getPendingRepayments(currentGroup.id);
+  const forMe = pending.filter(p => p.to === me.name && p.status === 'pending');
+  const section = document.getElementById('repay-pending-section');
+  const list    = document.getElementById('repay-pending-list');
+  const countEl = document.getElementById('repay-pending-count');
+
+  if (!forMe.length) {
+    if (section) section.style.display = 'none';
+    return;
+  }
+
+  if (section) section.style.display = 'block';
+  if (countEl) countEl.textContent = forMe.length;
+  if (list) list.innerHTML = forMe.map(p => {
+    const fromC = COLORS[Math.abs(hash(p.from)) % COLORS.length];
+    const methodBadge = p.method === 'upi'
+      ? `<span class="pending-method-badge upi">📱 UPI</span>`
+      : `<span class="pending-method-badge cash">💵 Cash</span>`;
+    const qrRow = p.method === 'upi' && p.upiId
+      ? `<div class="pending-qr-row">
+           <div class="pqr-qr" id="pqr-${p.id}"></div>
+           <div class="pqr-info">
+             <div class="pqr-upi">${p.upiId}</div>
+             <div class="pqr-amt">₹${fmt(p.amount)}</div>
+           </div>
+         </div>`
+      : '';
+    return `<div class="pending-card">
+      <div class="pending-card-header">
+        <span class="pc-title">Payment from <strong>${p.from}</strong></span>
+        <span class="pc-badge receiver">You receive</span>
+      </div>
+      <div class="pending-card-body">
+        <div class="pending-flow">
+          <div class="avatar" style="background:${fromC};width:26px;height:26px;font-size:10px">${p.from[0]}</div>
+          <span class="pf-name" style="color:${fromC}">${p.from}</span>
+          <span class="pf-arrow">→</span>
+          <span class="pf-name" style="color:var(--success)">${p.to}</span>
+          <span class="pf-amt">₹${fmt(p.amount)}</span>
+        </div>
+        ${methodBadge}
+        ${p.note ? `<div class="pending-meta">Note: ${p.note}</div>` : ''}
+        <div class="pending-meta">Submitted ${formatDate(p.timestamp)}</div>
+        ${qrRow}
+        <div class="pending-actions">
+          <button class="btn-confirm" onclick="acceptPending('${p.id}')">✅ Confirm Received</button>
+          <button class="btn-reject"  onclick="rejectPending('${p.id}')">✗ Reject</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Generate QR codes after DOM is set
+  forMe.forEach(p => {
+    if (p.method === 'upi' && p.upiId) {
+      const el = document.getElementById('pqr-' + p.id);
+      if (el) {
+        const upiStr = `upi://pay?pa=${encodeURIComponent(p.upiId)}&pn=${encodeURIComponent(p.to)}&am=${p.amount.toFixed(2)}`;
+        try { new QRCode(el, { text: upiStr, width: 80, height: 80, colorDark: '#1a1a2e', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e) {}
+      }
+    }
+  });
+}
+
+function renderPendingOnDashboard() {
+  if (!currentGroup) return;
+  const pending = getPendingRepayments(currentGroup.id);
+
+  // Show on dashboard: all pending items involving me (as sender OR receiver)
+  const relevant = pending.filter(p =>
+    p.status === 'pending' && (p.from === me.name || p.to === me.name || me.isAdmin)
+  );
+  const section  = document.getElementById('dash-pending-section');
+  const list     = document.getElementById('dash-pending-list');
+  const countEl  = document.getElementById('dash-pending-count');
+
+  if (!relevant.length) {
+    if (section) section.style.display = 'none';
+    return;
+  }
+
+  if (section) section.style.display = 'block';
+  if (countEl) countEl.textContent = relevant.length;
+  if (list) list.innerHTML = relevant.map(p => {
+    const fromC = COLORS[Math.abs(hash(p.from)) % COLORS.length];
+    const toC   = COLORS[Math.abs(hash(p.to))   % COLORS.length];
+    const iAmReceiver = me.name === p.to;
+    const methodBadge = p.method === 'upi'
+      ? `<span class="pending-method-badge upi">📱 UPI</span>`
+      : `<span class="pending-method-badge cash">💵 Cash</span>`;
+    return `<div class="pending-card">
+      <div class="pending-card-header">
+        <span class="pc-title">${p.from} → ${p.to}</span>
+        <span class="pc-badge ${iAmReceiver ? 'receiver' : ''}">${iAmReceiver ? 'You receive' : 'You sent'}</span>
+      </div>
+      <div class="pending-card-body">
+        <div class="pending-flow">
+          <div class="avatar" style="background:${fromC};width:26px;height:26px;font-size:10px">${p.from[0]}</div>
+          <span class="pf-name" style="color:${fromC}">${p.from}</span>
+          <span class="pf-arrow">→</span>
+          <div class="avatar" style="background:${toC};width:26px;height:26px;font-size:10px">${p.to[0]}</div>
+          <span class="pf-name" style="color:${toC}">${p.to}</span>
+          <span class="pf-amt">₹${fmt(p.amount)}</span>
+        </div>
+        ${methodBadge}
+        <div class="pending-meta">Submitted ${formatDate(p.timestamp)}</div>
+        ${iAmReceiver || me.isAdmin ? `
+        <div class="pending-actions">
+          <button class="btn-confirm" onclick="acceptPending('${p.id}')">✅ Confirm</button>
+          <button class="btn-reject"  onclick="rejectPending('${p.id}')">✗ Reject</button>
+        </div>` : `<div style="font-size:12px;color:var(--muted2)">⏳ Waiting for ${p.to} to confirm…</div>`}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderAdminMembers() {
