@@ -795,22 +795,48 @@ let ADMIN_PIN  = '4447';
 let payMethod = 'cash'; // 'cash' | 'upi'
 let _repayQRInstance = null;
 
-// ─── PENDING REPAYMENTS HELPERS ─────────────────────────────
-// Stored per group in localStorage as: ts_pending_<groupId>
-// Each entry: { id, groupId, from, to, amount, note, method, upiId, timestamp, status, recordedBy }
-// status: 'pending' | 'confirmed' | 'rejected'
+// ─── PENDING REPAYMENTS — GAS-BACKED + REALTIME POLL ─────────
+// Pending items live in Google Sheets via GAS actions:
+//   addPendingRepayment      → writes a row to "Pending" sheet
+//   fetchPendingRepayments   → reads all rows for a groupId
+//   updatePendingStatus      → marks row confirmed / rejected
+// A 10-second poll keeps the receiver's UI in sync across devices.
 
-function PENDING_KEY(gid) { return `ts_pending_${gid}`; }
-function UPI_KEY(name)     { return `ts_upi_${name}`; }
+let _pendingCache = [];   // in-memory cache for current group
+let _pollTimer    = null; // setInterval handle
 
-function getPendingRepayments(gid) {
-  try { return JSON.parse(localStorage.getItem(PENDING_KEY(gid)) || '[]'); } catch(e) { return []; }
-}
-function savePendingRepayments(gid, arr) {
-  localStorage.setItem(PENDING_KEY(gid), JSON.stringify(arr));
-}
+function UPI_KEY(name) { return `ts_upi_${name}`; }
 function getUpiId(name) { return localStorage.getItem(UPI_KEY(name)) || ''; }
 function setUpiId(name, id) { localStorage.setItem(UPI_KEY(name), id); }
+
+// Fetch pending repayments from GAS and refresh UI
+async function fetchAndRenderPending(notifyNew) {
+  if (!currentGroup) return;
+  try {
+    const res = await gas('fetchPendingRepayments', { groupId: currentGroup.id });
+    const fresh = res.pending || [];
+    if (notifyNew) {
+      const prevIds = new Set(_pendingCache.map(p => p.id));
+      fresh.filter(p => p.status === 'pending' && p.to === me.name && !prevIds.has(p.id))
+           .forEach(p => toast(`💸 ${p.from} sent you ₹${fmt(p.amount)} — confirm below`, 'ok'));
+    }
+    _pendingCache = fresh;
+    renderRepay();
+    renderPendingOnDashboard();
+  } catch(e) { /* silent — don't spam on poll failures */ }
+}
+
+function startPoll() {
+  stopPoll();
+  fetchAndRenderPending(false); // immediate first load
+  _pollTimer = setInterval(() => fetchAndRenderPending(true), 10000);
+}
+
+function stopPoll() {
+  if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
+}
+
+function getPendingRepayments() { return _pendingCache; }
 
 // ─── BOOT ─────────────────────────────────────────────────
 // DOMContentLoaded fires before images/fonts — much faster than window.onload
