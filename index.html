@@ -1024,11 +1024,12 @@ async function loadGroupData() {
     localStorage.setItem(CACHE_KEY_GDATA(currentGroup.id), JSON.stringify(groupData));
     document.getElementById('dash-loading').style.display = 'none';
     document.getElementById('dash-content').style.display = 'block';
-    renderDashboard();
+    renderDashboard();       // includes renderPendingOnDashboard which reads _pendingCache
     populateDropdowns();
+    renderHistory();
+    renderRepay();           // reads _pendingCache — must run after it's populated above
     document.getElementById('last-upd').textContent = 'Updated ' + new Date().toLocaleTimeString();
     if (me.isAdmin) renderAdminMembers();
-    requestAnimationFrame(() => { renderHistory(); renderRepay(); });
   } catch(e) {
     if (!cached) toast('Error loading data: '+e.message,'err');
     // If we had cache, silently keep showing it
@@ -2035,7 +2036,16 @@ function switchTab(name) {
   document.getElementById('tab-'+name)?.classList.add('active');
   // Lazy render each tab only when visited
   if (name==='add'||name==='repay') { populateDropdowns(); renderSplitRows(); }
-  if (name==='repay') renderRepay();
+  if (name==='repay') {
+    // Always refresh pending from server when opening Repayment tab
+    if (currentGroup) {
+      gas('getPendingRepayments', { groupId: currentGroup.id })
+        .then(res => { _pendingCache = res.pending || []; renderRepay(); renderPendingOnDashboard(); })
+        .catch(() => renderRepay());
+    } else {
+      renderRepay();
+    }
+  }
   if (name==='expenses') renderExpensesTab();
   if (name==='history') renderHistory();
 }
