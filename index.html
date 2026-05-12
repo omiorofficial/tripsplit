@@ -8,6 +8,8 @@
 <title>TripSplit</title>
 <!-- QR Code library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <!-- Preconnect to speed up Google Fonts DNS + TLS -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -532,6 +534,7 @@ a{color:inherit;text-decoration:none;}
           <select id="exp-filter-person" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
             <option value="">All Members</option>
           </select>
+          <button class="refresh-btn" onclick="downloadExpensesExcel()" title="Download Excel">⬇️ Excel</button>
         </div>
       </div>
       <div id="expenses-list" style="margin-top:12px"></div>
@@ -650,7 +653,10 @@ a{color:inherit;text-decoration:none;}
       <div class="back-btn" onclick="goHome()">← All Trips</div>
       <div class="sec-header">
         <div class="sec-title"><span class="dot"></span>All Transactions</div>
-        <button class="refresh-btn" onclick="loadGroupData()">⟳</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="refresh-btn" onclick="downloadHistoryExcel()">⬇️ Excel</button>
+          <button class="refresh-btn" onclick="loadGroupData()">⟳</button>
+        </div>
       </div>
       <div id="history-list"></div>
     </div>
@@ -1098,15 +1104,60 @@ function renderDashboard() {
       <div class="hc-sub">${totalSpent>0?((myPaid/totalSpent)*100).toFixed(0):0}% of total</div>
     </div>
     <div class="hero-card full">
-      <div class="hc-label">Repayment Progress</div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:2px">
-        <span style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--success)">₹${fmt(totalRepaid)} settled</span>
-        <span style="font-size:12px;color:rgba(255,255,255,0.6)">₹${fmt(totalPending)} pending</span>
-      </div>
-      <div class="progress-wrap">
-        <div class="progress-bar"><div class="progress-fill" style="width:${repaidPct.toFixed(1)}%"></div></div>
-        <div class="progress-labels"><span>${repaidPct.toFixed(0)}% settled</span><span>₹${fmt(totalSpent)} total</span></div>
-      </div>
+      <div class="hc-label">Debt Settlement Progress</div>
+      ${(()=>{
+        // Step 1: Current remaining settlements (after all repayments applied to balances)
+        const settles = calcSettlements(calcBalances());
+
+        // Step 2: Actual repayments made, keyed by from→to
+        // pairPaid[from][to] = total amount from has paid to to
+        const pairPaid = {};
+        groupData.repayments.forEach(r => {
+          if (!pairPaid[r.from]) pairPaid[r.from] = {};
+          pairPaid[r.from][r.to] = (pairPaid[r.from][r.to] || 0) + (+r.amount || 0);
+        });
+
+        // Step 3: For each settlement pair, original debt = remaining + already paid
+        // Group by debtor (from), summing across all their creditors
+        const debtorMap = {}; // { from: { required, paid } }
+        settles.forEach(t => {
+          const alreadyPaid = (pairPaid[t.from] && pairPaid[t.from][t.to]) ? pairPaid[t.from][t.to] : 0;
+          const original = t.amount + alreadyPaid; // what they originally owed this creditor
+          if (!debtorMap[t.from]) debtorMap[t.from] = { required: 0, paid: 0 };
+          debtorMap[t.from].required += original;
+          debtorMap[t.from].paid     += alreadyPaid;
+        });
+
+        // Also include debtors who have fully settled (remaining = 0, but paid > 0)
+        Object.keys(pairPaid).forEach(from => {
+          Object.entries(pairPaid[from]).forEach(([to, paid]) => {
+            // Only add if this pair doesn't already appear in settles
+            const alreadyInSettle = settles.some(s => s.from === from && s.to === to);
+            if (!alreadyInSettle) {
+              if (!debtorMap[from]) debtorMap[from] = { required: 0, paid: 0 };
+              debtorMap[from].required += paid;
+              debtorMap[from].paid     += paid;
+            }
+          });
+        });
+
+        const debtors = Object.entries(debtorMap).filter(([,d]) => d.required > 0.01);
+        if (!debtors.length) return `<div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:8px">✅ No outstanding debts!</div>`;
+
+        return debtors.map(([name, d]) => {
+          const pct = Math.min(100, (d.paid / d.required) * 100);
+          const c = COLORS[Math.abs(hash(name)) % COLORS.length];
+          const remaining = Math.max(0, d.required - d.paid);
+          const pctLabel = pct.toFixed(0) + '%';
+          return `<div style="margin-top:10px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:700;color:#fff">${name} <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.5)">${pctLabel} settled</span></span>
+              <span style="font-size:11px;color:rgba(255,255,255,0.55)">₹${fmt(d.paid)} paid · ${remaining>0.01?'₹'+fmt(remaining)+' left':'✅ done'}</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${pct.toFixed(1)}%;background:${c}"></div></div>
+          </div>`;
+        }).join('');
+      })()}
     </div>`;
 
   // Net balances
@@ -2075,7 +2126,120 @@ function formatDate(s) {
 }
 function hash(s){ let h=0; for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i); return h; }
 
-// ─── GAS CALL ─────────────────────────────────────────────
+// ─── EXCEL EXPORT ─────────────────────────────────────────
+function downloadExpensesExcel() {
+  const catFilter    = document.getElementById('exp-filter-cat')?.value || '';
+  const personFilter = document.getElementById('exp-filter-person')?.value || '';
+  const members      = groupData.members || [];
+
+  let expenses = [...(groupData.expenses || [])].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  if (catFilter)    expenses = expenses.filter(e => e.category === catFilter);
+  if (personFilter) expenses = expenses.filter(e => e.splits && personFilter in e.splits);
+
+  // Build rows: one row per expense, columns for each member's share
+  const header = ['Date','Description','Category','Total Amount (₹)','Paid By',
+    ...members.map(m => m+' Share (₹)'), 'Notes'];
+
+  const rows = expenses.map(exp => {
+    const splits = exp.splits || {};
+    return [
+      exp.date ? new Date(exp.date).toLocaleString('en-IN') : '',
+      exp.description || '',
+      exp.category || '',
+      +exp.amount || 0,
+      exp.paidBy || '',
+      ...members.map(m => +(splits[m]||0)),
+      exp.notes || ''
+    ];
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  // Bold header row
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let C = range.s.c; C <= range.e.c; C++) {
+    const addr = XLSX.utils.encode_cell({r:0, c:C});
+    if (!ws[addr]) continue;
+    ws[addr].s = { font: { bold: true } };
+  }
+  // Column widths
+  ws['!cols'] = [
+    {wch:18},{wch:28},{wch:22},{wch:16},{wch:14},
+    ...members.map(()=>({wch:16})),
+    {wch:24}
+  ];
+  XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
+
+  const filterTag = [catFilter?catFilter.replace(/^\S+\s/,''):'', personFilter].filter(Boolean).join('_') || 'All';
+  const tripName  = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
+  XLSX.writeFile(wb, `${tripName}_Expenses_${filterTag}.xlsx`);
+  toast('Expenses downloaded!','ok');
+}
+
+function downloadRepaymentExcel() {
+  const repayments = [...(groupData.repayments || [])].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  const header = ['Date','From','To','Amount (₹)','Note','Added By'];
+  const rows = repayments.map(r => [
+    r.date ? new Date(r.date).toLocaleString('en-IN') : '',
+    r.from || '', r.to || '',
+    +r.amount || 0,
+    r.note || '', r.addedBy || ''
+  ]);
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  ws['!cols'] = [{wch:18},{wch:14},{wch:14},{wch:14},{wch:24},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Repayments');
+  const tripName = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
+  XLSX.writeFile(wb, `${tripName}_Repayments.xlsx`);
+  toast('Repayments downloaded!','ok');
+}
+
+function downloadHistoryExcel() {
+  const items = [
+    ...(groupData.expenses||[]).map(e=>({...e,_t:'expense'})),
+    ...(groupData.repayments||[]).map(r=>({...r,_t:'repayment'}))
+  ].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+
+  const members = groupData.members || [];
+  const header = ['Date','Type','Description / Parties','Category','Amount (₹)',
+    'Paid By / From','To','Note / Added By',
+    ...members.map(m=>m+' Share (₹)')];
+
+  const rows = items.map(item => {
+    if (item._t === 'expense') {
+      const splits = item.splits || {};
+      return [
+        item.date ? new Date(item.date).toLocaleString('en-IN') : '',
+        'Expense',
+        item.description || '',
+        item.category || '',
+        +item.amount || 0,
+        item.paidBy || '', '',
+        item.notes || '',
+        ...members.map(m => +(splits[m]||0))
+      ];
+    } else {
+      return [
+        item.date ? new Date(item.date).toLocaleString('en-IN') : '',
+        'Repayment',
+        `${item.from} → ${item.to}`,
+        '', +item.amount || 0,
+        item.from || '', item.to || '',
+        item.note || '',
+        ...members.map(()=>0)
+      ];
+    }
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  ws['!cols'] = [{wch:18},{wch:12},{wch:28},{wch:22},{wch:14},{wch:14},{wch:14},{wch:22},...members.map(()=>({wch:16}))];
+  XLSX.utils.book_append_sheet(wb, ws, 'History');
+  const tripName = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
+  XLSX.writeFile(wb, `${tripName}_History.xlsx`);
+  toast('History downloaded!','ok');
+}
+
 async function gas(action, payload={}) {
   if (!GAS_URL) { toast('Apps Script URL not set','err'); throw new Error('No URL'); }
   const ctrl = new AbortController();
