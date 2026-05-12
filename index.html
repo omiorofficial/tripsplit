@@ -783,7 +783,7 @@ a{color:inherit;text-decoration:none;}
 // ─── CONSTANTS ────────────────────────────────────────────
 const COLORS = ['#5b5fcf','#f5a623','#4a90d9','#e040fb','#2ecc71','#e53935','#00bcd4','#ff7043'];
 const ADMIN_NAME_KEY = 'tripsplit_admin';
-let GAS_URL = 'https://script.google.com/macros/s/AKfycbz1NQvKvMh9mnLR_iCk-mzVCM-VHWyDn02d36TwvOFupURjQISoQVBh7v5ym8wYhVTjFA/exec';
+let GAS_URL = 'https://script.google.com/macros/s/AKfycbyvNHGHBFuCjMynF1VTv7eKb0M_dzj59w-l8pIq5p7EqjultttCT-yNeiaO0QuFDIGQLQ/exec';
 let me = null;
 let groups = [];
 let currentGroup = null;
@@ -816,7 +816,7 @@ function getPendingRepayments(gid) {
 // ─── BOOT ─────────────────────────────────────────────────
 // DOMContentLoaded fires before images/fonts — much faster than window.onload
 document.addEventListener('DOMContentLoaded', () => {
-  GAS_URL = 'https://script.google.com/macros/s/AKfycbz1NQvKvMh9mnLR_iCk-mzVCM-VHWyDn02d36TwvOFupURjQISoQVBh7v5ym8wYhVTjFA/exec';
+  GAS_URL = 'https://script.google.com/macros/s/AKfycbyvNHGHBFuCjMynF1VTv7eKb0M_dzj59w-l8pIq5p7EqjultttCT-yNeiaO0QuFDIGQLQ/exec';
   ADMIN_NAME = 'Gaurav123';
   ADMIN_PIN  = '4447';
 
@@ -1000,6 +1000,7 @@ async function loadGroupData() {
     try {
       groupData = JSON.parse(cached);
       currentGroup.members = groupData.members || [];
+      _pendingCache = groupData.pending || [];   // restore from cache instantly
       document.getElementById('dash-loading').style.display = 'none';
       document.getElementById('dash-content').style.display = 'block';
       renderDashboard();
@@ -1014,13 +1015,11 @@ async function loadGroupData() {
 
   // 2. Fetch fresh in background (always — triggered by mutation or first open)
   try {
-    const [res, pendingRes] = await Promise.all([
-      gas('getGroupData', { groupId: currentGroup.id }),
-      gas('getPendingRepayments', { groupId: currentGroup.id }).catch(() => ({ pending: [] }))
-    ]);
-    groupData = res.data || { expenses:[], repayments:[], members:[] };
+    const res = await gas('getGroupData', { groupId: currentGroup.id });
+    groupData = res.data || { expenses:[], repayments:[], members:[], pending:[] };
     currentGroup.members = groupData.members || [];
-    _pendingCache = pendingRes.pending || [];
+    _pendingCache = groupData.pending || [];
+    // Store pending in cache too so it's instant on next load
     localStorage.setItem(CACHE_KEY_GDATA(currentGroup.id), JSON.stringify(groupData));
     document.getElementById('dash-loading').style.display = 'none';
     document.getElementById('dash-content').style.display = 'block';
@@ -2036,16 +2035,7 @@ function switchTab(name) {
   document.getElementById('tab-'+name)?.classList.add('active');
   // Lazy render each tab only when visited
   if (name==='add'||name==='repay') { populateDropdowns(); renderSplitRows(); }
-  if (name==='repay') {
-    // Always refresh pending from server when opening Repayment tab
-    if (currentGroup) {
-      gas('getPendingRepayments', { groupId: currentGroup.id })
-        .then(res => { _pendingCache = res.pending || []; renderRepay(); renderPendingOnDashboard(); })
-        .catch(() => renderRepay());
-    } else {
-      renderRepay();
-    }
-  }
+  if (name==='repay') renderRepay();
   if (name==='expenses') renderExpensesTab();
   if (name==='history') renderHistory();
 }
