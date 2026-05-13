@@ -121,49 +121,114 @@ a{color:inherit;text-decoration:none;}
 .sec-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;color:var(--text);}
 .sec-title .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 .pos{color:var(--success);} .neg{color:var(--danger);} .zero{color:var(--muted2);}
-/* CSS containment speeds up layout of list items */
-.paid-row,.cat-row,.hist-item,.exp-card,.settle-card,.group-card{contain:layout style;}
+.hist-item,.exp-card,.settle-card,.group-card{contain:layout style;}
+@keyframes dashEntry{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes barShimmer{0%{left:-100%}100%{left:200%}}
 
 /* Hero stats */
 .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.hero-card{background:#3f43b0;border:none;border-radius:var(--r);padding:18px 20px;box-shadow:0 4px 18px rgba(63,67,176,0.22);}
+.hero-card{background:#3f43b0;border:none;border-radius:var(--r);padding:18px 20px;box-shadow:0 4px 18px rgba(63,67,176,0.22);cursor:pointer;transition:opacity .2s;position:relative;overflow:hidden;}
+.hero-card:hover{opacity:.92;}
 .hero-card.full{grid-column:1/-1;}
-.hero-card .hc-label{font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.hero-card .hc-label{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
 .hero-card .hc-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;}
 .hero-card .hc-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;}
+.hero-card .hc-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.13);border-radius:20px;padding:3px 10px;font-size:10px;color:rgba(255,255,255,0.75);margin-top:10px;}
 .progress-wrap{margin-top:10px;}
 .progress-bar{height:6px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;margin-top:4px;}
 .progress-fill{height:100%;border-radius:3px;background:var(--success);transition:width .4s ease;}
 .progress-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;}
 
-/* Who paid */
+/* Net balance cards */
+.balance-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+  margin-bottom:10px;
+}
+.bal-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:18px 20px;
+  min-height:140px;box-shadow:0 1px 4px rgba(91,95,207,0.07);cursor:pointer;transition:border-color .2s,transform .15s;animation:dashEntry .4s both;}
+.bal-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+.bal-card .bc-name{
+  font-size:13px;
+  font-weight:700;
+  color:var(--text);
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.bal-card .bc-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;}
+.bal-card .bc-amt{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(22px,2vw,38px);
+  line-height:1.1;
+  word-break:break-word;font-weight:800;margin-bottom:2px;}
+.bal-card .bc-lbl{font-size:11px;display:flex;align-items:center;gap:3px;margin-top:3px;}
+.bal-card .bc-bar{height:3px;border-radius:2px;margin-top:10px;overflow:hidden;}
+.bal-card .bc-bar-fill{height:100%;border-radius:2px;}
+
+/* Payments by member — new rich cards */
 .paid-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
-.paid-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(91,95,207,0.06);}
-.paid-row .pr-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.paid-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:border-color .2s;animation:dashEntry .4s both;}
+.paid-row:hover{border-color:var(--accent);}
+.paid-row:hover .pr-arrow{opacity:1;}
+.pr-arrow{opacity:0;transition:opacity .2s;color:var(--accent);font-size:16px;align-self:center;flex-shrink:0;margin-left:auto;}
+.pr-rank{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.pr-rank-1{background:#FAEEDA;color:#854F0B;}
+.pr-rank-2{background:#f5f5f0;color:#5F5E5A;}
+.pr-rank-3{background:#e8f5e9;color:#2e7d32;}
+.paid-row .pr-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#fff;flex-shrink:0;}
 .paid-row .pr-info{flex:1;min-width:0;}
-.paid-row .pr-name{font-size:13px;font-weight:500;display:flex;justify-content:space-between;color:var(--text);}
-.paid-row .pr-name span{font-family:'Syne',sans-serif;font-weight:700;}
-.paid-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:5px;overflow:hidden;}
-.paid-fill{height:100%;border-radius:2px;transition:width .4s ease;}
-.paid-row .pr-share{font-size:11px;color:var(--muted2);margin-top:3px;}
+.pr-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.pr-name-text{font-size:14px;font-weight:500;color:var(--text);}
+.pr-badge{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;}
+.pr-you{background:#eef2ff;color:#3C3489;}
+.pr-top-payer{background:#FAEEDA;color:#854F0B;}
+.pr-meta{font-size:11px;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.pr-pill{display:inline-flex;align-items:center;gap:3px;background:var(--surface2);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--muted2);}
+.pr-amt-inline{margin-left:auto;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+.paid-bar-track{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:8px;position:relative;}
+.paid-bar-fill{height:100%;border-radius:3px;position:relative;overflow:hidden;}
+.bar-shimmer-inner{position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);animation:barShimmer 2.2s infinite;}
+.pr-stats{display:flex;gap:0;}
+.pr-stat{flex:1;display:flex;flex-direction:column;gap:1px;border-right:1px solid var(--border);padding:0 10px;}
+.pr-stat:first-child{padding-left:0;}
+.pr-stat:last-child{border-right:none;}
+.pr-stat-val{font-size:12px;font-weight:500;color:var(--text);}
+.pr-stat-lbl{font-size:10px;color:var(--muted2);}
 
-/* Category breakdown */
-.cat-list{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
-.cat-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:11px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(91,95,207,0.05);}
-.cat-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
+/* Category breakdown — new rich cards */
+.cat-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.cat-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:border-color .2s;animation:dashEntry .4s both;}
+.cat-row:hover{border-color:var(--accent);}
+.cat-row:hover .pr-arrow{opacity:1;}
+.cat-icon-wrap{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .cat-info{flex:1;min-width:0;}
-.cat-name-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;}
-.cat-name-row .cn{color:var(--muted2);}
-.cat-name-row .ca{font-family:'Syne',sans-serif;font-weight:700;color:var(--text);}
-.cat-bar{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
-.cat-fill{height:100%;border-radius:2px;background:var(--accent3);}
-
-/* Balance cards */
-.balance-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px;}
-.bal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:0 1px 4px rgba(91,95,207,0.07);}
-.bal-card .bc-name{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.bal-card .bc-amt{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
-.bal-card .bc-lbl{font-size:11px;margin-top:3px;}
+.cat-name-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px;}
+.cat-name-row .cn{font-size:13px;color:var(--muted2);}
+.cat-name-row .ca{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+.cat-pct-badge{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;margin-left:6px;}
+.cat-sub{font-size:11px;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.cat-tag{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;}
+.cat-bar-track{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:8px;position:relative;}
+.cat-bar-fill{height:100%;border-radius:3px;position:relative;overflow:hidden;}
+.cat-stats{display:flex;gap:0;}
+.cat-stat{flex:1;display:flex;flex-direction:column;gap:1px;border-right:1px solid var(--border);padding:0 10px;}
+.cat-stat:first-child{padding-left:0;}
+.cat-stat:last-child{border-right:none;}
+.cat-stat-val{font-size:12px;font-weight:500;color:var(--text);}
+.cat-stat-lbl{font-size:10px;color:var(--muted2);}
+.dash-tip{font-size:11px;color:var(--muted2);background:var(--surface2);border-radius:var(--r2);padding:7px 12px;display:flex;align-items:center;gap:6px;margin-bottom:14px;}
 
 /* Settlements */
 .settle-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 6px rgba(91,95,207,0.07);}
@@ -379,6 +444,9 @@ a{color:inherit;text-decoration:none;}
   .sec-header{flex-direction:column;align-items:flex-start;gap:8px;}
   .sec-header > div:last-child{display:flex;gap:6px;width:100%;}
   .sec-header select{flex:1;font-size:11px;}
+  .pr-stats,.cat-stats{flex-wrap:wrap;}
+  .pr-stat,.cat-stat{min-width:80px;border-bottom:1px solid var(--border);border-right:none;padding:4px 0;}
+  .pr-stat:last-child,.cat-stat:last-child{border-bottom:none;}
   .exp-card{padding:12px;}
   .exp-card-left .ec-desc{font-size:13px;}
   .exp-card-right .ec-amt{font-size:15px;}
@@ -504,11 +572,18 @@ a{color:inherit;text-decoration:none;}
       <div id="dash-loading" class="loading"><div class="spin"></div><div>Loading...</div></div>
       <div id="dash-content" style="display:none">
         <div class="hero-stats" id="hero-stats"></div>
-        <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Net Balances</div>
+        <div class="sec-title" style="margin-bottom:10px"><span class="dot" style="background:var(--success)"></span>Net Balances</div>
         <div class="balance-grid" id="balance-grid"></div>
-        <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Payments by Member</div>
+        <div class="dash-tip">👆 Click any card above to see that person's expenses</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="sec-title" style="margin-bottom:0"><span class="dot"></span>Payments by Member</div>
+          <span style="font-size:11px;color:var(--muted2)">tap card → filtered expenses</span>
+        </div>
         <div class="paid-list" id="paid-list"></div>
-        <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Spend by Category</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="sec-title" style="margin-bottom:0"><span class="dot" style="background:var(--accent3)"></span>Spend by Category</div>
+          <span style="font-size:11px;color:var(--muted2)">tap card → filtered expenses</span>
+        </div>
         <div class="cat-list" id="cat-list"></div>
         <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Who Pays Whom</div>
         <div id="settlements-list"></div>
@@ -1102,15 +1177,17 @@ function renderDashboard() {
   const myPaid = groupData.expenses.filter(e=>e.paidBy===me.name).reduce((s,e)=>s+(+e.amount||0),0);
 
   document.getElementById('hero-stats').innerHTML = `
-    <div class="hero-card" onclick="switchTab('expenses')" style="cursor:pointer">
-      <div class="hc-label">Total Spent ↗</div>
+    <div class="hero-card" onclick="switchTab('expenses')" style="background:#3f43b0;">
+      <div class="hc-label">🧾 Total spent</div>
       <div class="hc-val">₹${fmt(totalSpent)}</div>
       <div class="hc-sub">${groupData.expenses.length} expenses · ${members.length} members</div>
+      <div class="hc-tag">↗ view all expenses</div>
     </div>
-    <div class="hero-card" onclick="switchTabFiltered('expenses','','${me.name}')" style="cursor:pointer">
-      <div class="hc-label">You Paid ↗</div>
+    <div class="hero-card" onclick="switchTabFiltered('expenses','','${me.name}')" style="background:#2d5fa8;">
+      <div class="hc-label">👤 You paid</div>
       <div class="hc-val" style="color:var(--accent2)">₹${fmt(myPaid)}</div>
       <div class="hc-sub">${totalSpent>0?((myPaid/totalSpent)*100).toFixed(0):0}% of total</div>
+      <div class="hc-tag">↗ your expenses</div>
     </div>
     <div class="hero-card full">
       <div class="hc-label">Debt Settlement Progress</div>
@@ -1259,68 +1336,158 @@ function renderDashboard() {
       })()}
     </div>`;
 
-  // Net balances
-  let bgHtml = Object.entries(bal).map(([n,b]) => {
-    const cls = b>0.01?'pos':b<-0.01?'neg':'zero';
-    const lbl = b>0.01?'gets back':b<-0.01?'owes':'settled';
-    const c = COLORS[Math.abs(hash(n))%COLORS.length];
-    return `<div class="bal-card" onclick="switchTabFiltered('expenses','','${n}')" style="cursor:pointer">
-      <div class="bc-name" style="color:${c}">${n}</div>
+  // ── Net balance cards ────────────────────────────────────────
+  let bgHtml = Object.entries(bal).map(([n,b], idx) => {
+    const cls   = b>0.01?'pos':b<-0.01?'neg':'zero';
+    const lbl   = b>0.01?'↑ gets back':b<-0.01?'↓ owes':'✓ settled';
+    const c     = COLORS[Math.abs(hash(n))%COLORS.length];
+    const barBg = b>0.01?'#e8f5e9':b<-0.01?'#ffebee':'var(--surface2)';
+    const barFg = b>0.01?'#2ecc71':b<-0.01?'#e53935':'var(--border)';
+    const delay = (idx * 0.1).toFixed(1);
+    return `<div class="bal-card" onclick="switchTabFiltered('expenses','','${n}')" style="animation-delay:${delay}s">
+      <div class="bc-name">
+        <div class="bc-av" style="background:${c}">${n[0].toUpperCase()}</div>
+        ${n}
+      </div>
       <div class="bc-amt ${cls}">₹${fmt(Math.abs(b))}</div>
-      <div class="bc-lbl ${cls}">${lbl} ↗</div>
+      <div class="bc-lbl ${cls}">${lbl}</div>
+      <div class="bc-bar" style="background:${barBg}">
+        <div class="bc-bar-fill" style="width:100%;background:${barFg}"></div>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('balance-grid').innerHTML = bgHtml || '<div class="empty" style="padding:16px">No data yet</div>';
 
-  // Payments by member
+  // ── Payments by member ───────────────────────────────────────
   const paidByPerson = {};
-  members.forEach(m => paidByPerson[m] = 0);
+  const expCountByPerson = {};
+  const lastExpByPerson = {};
+  members.forEach(m => { paidByPerson[m]=0; expCountByPerson[m]=0; });
   groupData.expenses.forEach(e => {
     const p = e.paidBy;
     if (!(p in paidByPerson)) paidByPerson[p] = 0;
-    paidByPerson[p] += +e.amount||0;
+    if (!(p in expCountByPerson)) expCountByPerson[p] = 0;
+    paidByPerson[p]   += +e.amount||0;
+    expCountByPerson[p]++;
+    const d = new Date(e.date||0);
+    if (!lastExpByPerson[p] || d > lastExpByPerson[p]) lastExpByPerson[p] = d;
   });
-  const maxPaid = Math.max(...Object.values(paidByPerson), 1);
+  const maxPaid    = Math.max(...Object.values(paidByPerson), 1);
   const sortedPaid = Object.entries(paidByPerson).sort((a,b)=>b[1]-a[1]);
-  document.getElementById('paid-list').innerHTML = sortedPaid.map(([n,amt]) => {
-    const c = COLORS[Math.abs(hash(n))%COLORS.length];
-    const pct = (amt/maxPaid*100).toFixed(1);
-    const share = totalSpent>0?((amt/totalSpent)*100).toFixed(0):0;
-    return `<div class="paid-row" onclick="switchTabFiltered('expenses','','${n}')" style="cursor:pointer">
+  const topPayerName = sortedPaid[0]?.[0];
+
+  document.getElementById('paid-list').innerHTML = sortedPaid.length ? sortedPaid.map(([n, amt], idx) => {
+    const c        = COLORS[Math.abs(hash(n))%COLORS.length];
+    const barPct   = (amt/maxPaid*100).toFixed(1);
+    const sharePct = totalSpent>0 ? ((amt/totalSpent)*100).toFixed(0) : 0;
+    const expCount = expCountByPerson[n]||0;
+    const avgAmt   = expCount>0 ? fmt(Math.round(amt/expCount)) : '—';
+    const netBal   = bal[n]||0;
+    const netCls   = netBal>0.01?'pos':netBal<-0.01?'neg':'zero';
+    const netStr   = netBal>0.01?`+₹${fmt(netBal)}`:netBal<-0.01?`−₹${fmt(Math.abs(netBal))}`:'₹0';
+    const isMe     = n===me.name;
+    const isTop    = n===topPayerName && amt>0;
+    const rankCls  = idx===0?'pr-rank-1':idx===1?'pr-rank-2':'pr-rank-3';
+    const lastD    = lastExpByPerson[n];
+    const daysAgo  = lastD ? Math.floor((Date.now()-lastD)/(1000*60*60*24)) : null;
+    const lastStr  = daysAgo===null?'—':daysAgo===0?'today':daysAgo===1?'1d ago':`${daysAgo}d ago`;
+    const delay    = (idx*0.1).toFixed(1);
+    return `<div class="paid-row" onclick="switchTabFiltered('expenses','','${n}')" style="animation-delay:${delay}s">
+      <div class="pr-rank ${rankCls}">${idx+1}</div>
       <div class="pr-av" style="background:${c}">${n[0].toUpperCase()}</div>
       <div class="pr-info">
-        <div class="pr-name"><span>${n}</span><span>₹${fmt(amt)} ↗</span></div>
-        <div class="paid-bar"><div class="paid-fill" style="width:${pct}%;background:${c}"></div></div>
-        <div class="pr-share">${share}% of total · ${groupData.expenses.filter(e=>e.paidBy===n).length} expenses</div>
+        <div class="pr-top">
+          <span class="pr-name-text">${n}</span>
+          ${isMe  ? `<span class="pr-badge pr-you">you</span>` : ''}
+          ${isTop ? `<span class="pr-badge pr-top-payer">top payer</span>` : ''}
+          <span class="pr-amt-inline">₹${fmt(amt)}</span>
+        </div>
+        <div class="pr-meta">
+          <span class="pr-pill">🧾 ${expCount} exp</span>
+          <span class="pr-pill">🕐 ${lastStr}</span>
+        </div>
+        <div class="paid-bar-track">
+          <div class="paid-bar-fill" style="width:${barPct}%;background:${c}">
+            <div class="bar-shimmer-inner"></div>
+          </div>
+        </div>
+        <div class="pr-stats">
+          <div class="pr-stat"><span class="pr-stat-val" style="color:${c}">${sharePct}%</span><span class="pr-stat-lbl">of total</span></div>
+          <div class="pr-stat"><span class="pr-stat-val">₹${avgAmt}</span><span class="pr-stat-lbl">avg / expense</span></div>
+          <div class="pr-stat"><span class="pr-stat-val ${netCls}">${netStr}</span><span class="pr-stat-lbl">net balance</span></div>
+        </div>
       </div>
+      <span class="pr-arrow">→</span>
     </div>`;
-  }).join('') || '<div class="empty" style="padding:16px">No expenses yet</div>';
+  }).join('') : '<div class="empty" style="padding:16px">No expenses yet</div>';
 
-  // Category breakdown
-  const catMap = {};
+  // ── Category breakdown ───────────────────────────────────────
+  const catMap   = {};
+  const catColors = {
+    '🏨 Accommodation': { bg:'#EEEDFE', bar:'#534AB7', text:'#3C3489' },
+    '🍽️ Food & Drinks':  { bg:'#EAF3DE', bar:'#639922', text:'#27500A' },
+    '🚗 Transport':      { bg:'#FAEEDA', bar:'#BA7517', text:'#633806' },
+    '🎟️ Activities':     { bg:'#FBEAF0', bar:'#D4537E', text:'#72243E' },
+    '🛒 Shopping':       { bg:'#E6F1FB', bar:'#378ADD', text:'#0C447C' },
+    '💊 Medical':        { bg:'#FCEBEB', bar:'#E24B4A', text:'#791F1F' },
+    '📦 Miscellaneous':  { bg:'#F1EFE8', bar:'#888780', text:'#444441' },
+  };
   const catIcons = {'🏨 Accommodation':'🏨','🍽️ Food & Drinks':'🍽️','🚗 Transport':'🚗','🎟️ Activities':'🎟️','🛒 Shopping':'🛒','💊 Medical':'💊','📦 Miscellaneous':'📦'};
+
   groupData.expenses.forEach(e => {
     const cat = e.category||'📦 Miscellaneous';
-    if (!catMap[cat]) catMap[cat]={amount:0,count:0};
+    if (!catMap[cat]) catMap[cat]={ amount:0, count:0, paidBy:{}, memberSet:new Set() };
     catMap[cat].amount += +e.amount||0;
     catMap[cat].count++;
+    const pb = e.paidBy||'';
+    catMap[cat].paidBy[pb] = (catMap[cat].paidBy[pb]||0) + (+e.amount||0);
+    Object.keys(e.splits||{}).forEach(p => catMap[cat].memberSet.add(p));
   });
-  const maxCat = Math.max(...Object.values(catMap).map(v=>v.amount), 1);
+
+  const maxCat    = Math.max(...Object.values(catMap).map(v=>v.amount), 1);
+  const maxCount  = Math.max(...Object.values(catMap).map(v=>v.count), 1);
   const sortedCat = Object.entries(catMap).sort((a,b)=>b[1].amount-a[1].amount);
-  document.getElementById('cat-list').innerHTML = sortedCat.length ? sortedCat.map(([cat,data]) => {
-    const icon = catIcons[cat] || '📦';
-    const pct = (data.amount/maxCat*100).toFixed(1);
-    const share = totalSpent>0?((data.amount/totalSpent)*100).toFixed(0):0;
-    return `<div class="cat-row" onclick="switchTabFiltered('expenses','${cat}','')" style="cursor:pointer">
-      <div class="cat-icon">${icon}</div>
+
+  document.getElementById('cat-list').innerHTML = sortedCat.length ? sortedCat.map(([cat, data], idx) => {
+    const icon     = catIcons[cat]||'📦';
+    const cc       = catColors[cat]||{ bg:'#F1EFE8', bar:'#888780', text:'#444441' };
+    const barPct   = (data.amount/maxCat*100).toFixed(1);
+    const sharePct = totalSpent>0 ? ((data.amount/totalSpent)*100).toFixed(0) : 0;
+    const avgAmt   = data.count>0 ? fmt(Math.round(data.amount/data.count)) : '—';
+    const topPayer = Object.entries(data.paidBy).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+    const myShare  = groupData.expenses
+      .filter(e=>(e.category||'📦 Miscellaneous')===cat)
+      .reduce((s,e)=>s+(+(e.splits||{})[me.name]||0), 0);
+    const memberCount = data.memberSet.size;
+    const isLargest  = idx===0;
+    const isMostItems= data.count===maxCount && maxCount>1;
+    const tag        = isLargest?`<span class="cat-tag" style="background:${cc.bg};color:${cc.text}">largest</span>`
+                      :isMostItems?`<span class="cat-tag" style="background:${cc.bg};color:${cc.text}">most items</span>`:'';
+    const delay = (idx*0.1).toFixed(1);
+    return `<div class="cat-row" onclick="switchTabFiltered('expenses','${cat}','')" style="animation-delay:${delay}s">
+      <div class="cat-icon-wrap" style="background:${cc.bg}">${icon}</div>
       <div class="cat-info">
         <div class="cat-name-row">
           <span class="cn">${cat.replace(/^\S+\s/,'')}</span>
-          <span class="ca">₹${fmt(data.amount)} <span style="font-size:10px;color:var(--muted2);font-family:'DM Sans'">(${share}%) ↗</span></span>
+          <span class="ca">₹${fmt(data.amount)}<span class="cat-pct-badge" style="background:${cc.bg};color:${cc.text}">${sharePct}%</span></span>
         </div>
-        <div class="cat-bar"><div class="cat-fill" style="width:${pct}%"></div></div>
+        <div class="cat-sub">
+          <span class="pr-pill">🧾 ${data.count} item${data.count>1?'s':''}</span>
+          <span class="pr-pill">⌀ ₹${avgAmt}</span>
+          ${tag}
+        </div>
+        <div class="cat-bar-track">
+          <div class="cat-bar-fill" style="width:${barPct}%;background:${cc.bar}">
+            <div class="bar-shimmer-inner"></div>
+          </div>
+        </div>
+        <div class="cat-stats">
+          <div class="cat-stat"><span class="cat-stat-val">${topPayer}</span><span class="cat-stat-lbl">top payer</span></div>
+          <div class="cat-stat"><span class="cat-stat-val" style="color:${cc.bar}">₹${fmt(Math.round(myShare))}</span><span class="cat-stat-lbl">your share</span></div>
+          <div class="cat-stat"><span class="cat-stat-val">${memberCount}</span><span class="cat-stat-lbl">members split</span></div>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--muted2);white-space:nowrap;padding-left:8px">${data.count} item${data.count>1?'s':''}</div>
+      <span class="pr-arrow">→</span>
     </div>`;
   }).join('') : '<div class="empty" style="padding:16px">No expenses yet</div>';
 
