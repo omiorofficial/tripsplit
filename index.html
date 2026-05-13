@@ -141,9 +141,9 @@ a{color:inherit;text-decoration:none;}
 
 /* Net balance cards */
 .balance-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:14px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
   margin-bottom:10px;
 }
 
@@ -227,50 +227,96 @@ a{color:inherit;text-decoration:none;}
 
 /* MOBILE FIX */
 
-
-
-@media(max-width:480px){
+@media(max-width:540px){
 
   .balance-grid{
-    grid-template-columns:1fr;
-    gap:10px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
   }
 
   .bal-card{
-    min-height:120px;
-    padding:14px;
+    width:100%;
+    min-height:auto;
+    padding:14px 16px;
+    box-sizing:border-box;
+  }
+
+  .bal-card .bc-amt{
+    font-size:28px;
+    letter-spacing:-1px;
+    white-space:nowrap;
   }
 
   .bal-card .bc-name{
     font-size:12px;
-    gap:6px;
   }
-
-  .bal-card .bc-av{
-    width:20px;
-    height:20px;
-    font-size:9px;
-  }
-
-.bal-card .bc-amt{
-  font-size:20px;
-  letter-spacing:-1px;
-}
-
-  .bal-card .bc-amt{
-  font-family:'Syne',sans-serif;
-  font-size:20px;
-  font-weight:800;
-  line-height:1;
-  letter-spacing:-2px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  margin-bottom:6px;
-}
 
   .bal-card .bc-lbl{
-    font-size:11px;
+    font-size:12px;
+  }
+
+  /* Payment cards */
+  .paid-row{
+    padding:10px;
+    overflow:hidden;
+  }
+
+  .pr-info{
+    min-width:0;
+    flex:1;
+    overflow:hidden;
+  }
+
+  .pr-name-text{
+    font-size:12px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width:90px;
+  }
+
+  .pr-amt-inline{
+    font-size:12px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  .pr-top{
+    gap:4px;
+    flex-wrap:nowrap;
+    overflow:hidden;
+  }
+
+  .pr-stats{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+  }
+
+  .pr-stat{
+    border-right:1px solid var(--border);
+    border-bottom:none;
+    padding:2px 6px;
+    min-width:0;
+  }
+
+  .pr-stat:first-child{ padding-left:0; }
+  .pr-stat:last-child{ border-right:none; }
+
+  .pr-stat-val{
+    font-size:10px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .pr-stat-lbl{ font-size:9px; }
+
+  .pr-av{
+    width:28px !important;
+    height:28px !important;
+    font-size:11px !important;
+    flex-shrink:0;
   }
 
 }
@@ -703,7 +749,7 @@ a{color:inherit;text-decoration:none;}
       <div class="sec-header">
         <div class="sec-title"><span class="dot"></span>All Expenses</div>
         <div style="display:flex;gap:8px;align-items:center">
-          <select id="exp-filter-cat" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
+         <select id="exp-filter-cat" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
             <option value="">All Categories</option>
             <option>🏨 Accommodation</option>
             <option>🍽️ Food & Drinks</option>
@@ -713,8 +759,11 @@ a{color:inherit;text-decoration:none;}
             <option>💊 Medical</option>
             <option>📦 Miscellaneous</option>
           </select>
+          <select id="exp-filter-paidby" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
+            <option value="">Paid by: All</option>
+          </select>
           <select id="exp-filter-person" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
-            <option value="">All Members</option>
+            <option value="">Split: All</option>
           </select>
           <button class="refresh-btn" onclick="downloadExpensesExcel()" title="Download Excel">⬇️ Excel</button>
         </div>
@@ -2330,12 +2379,24 @@ async function confirmSettle() {
 function renderExpensesTab() {
   const members = groupData.members || [];
   const expenses = groupData.expenses || [];
-  const catFilter = document.getElementById('exp-filter-cat')?.value || '';
+  const catFilter    = document.getElementById('exp-filter-cat')?.value    || '';
+  const paidByFilter = document.getElementById('exp-filter-paidby')?.value || '';
   const personFilter = document.getElementById('exp-filter-person')?.value || '';
 
-  const psel = document.getElementById('exp-filter-person');
-  if (psel && psel.options.length <= 1) {
+   const psel = document.getElementById('exp-filter-person');
+  if (psel) {
+    const prevPerson = psel.value;
+    psel.innerHTML = '<option value="">Split: All</option>';
     members.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; psel.appendChild(o); });
+    if (prevPerson) psel.value = prevPerson;
+  }
+
+  const pbsel = document.getElementById('exp-filter-paidby');
+  if (pbsel) {
+    const prevPaidBy = pbsel.value;
+    pbsel.innerHTML = '<option value="">Paid by: All</option>';
+    members.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; pbsel.appendChild(o); });
+    if (prevPaidBy) pbsel.value = prevPaidBy;
   }
 
   const personExp = {};
@@ -2373,9 +2434,10 @@ function renderExpensesTab() {
     }).join('')
   }</div>`;
 
-  let filtered = [...expenses].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-  if (catFilter) filtered = filtered.filter(e=>e.category===catFilter);
-  if (personFilter) filtered = filtered.filter(e=>e.splits && personFilter in e.splits);
+   let filtered = [...expenses].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  if (catFilter)    filtered = filtered.filter(e => e.category === catFilter);
+  if (paidByFilter) filtered = filtered.filter(e => e.paidBy === paidByFilter);
+  if (personFilter) filtered = filtered.filter(e => e.splits && personFilter in e.splits);
 
   if (!filtered.length) {
     document.getElementById('expenses-list').innerHTML = '<div class="empty"><div class="ei">📭</div>No expenses match</div>';
@@ -2465,6 +2527,8 @@ function switchTabFiltered(tabName, cat, person) {
     if (person) {
       const pSel = document.getElementById('exp-filter-person');
       if (pSel) pSel.value = person;
+      const pbSel = document.getElementById('exp-filter-paidby');
+      if (pbSel) pbSel.value = '';
     }
     renderExpensesTab();
   }, 50);
@@ -2491,13 +2555,13 @@ function formatDate(s) {
 function hash(s){ let h=0; for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i); return h; }
 
 // ─── EXCEL EXPORT ─────────────────────────────────────────
-function downloadExpensesExcel() {
-  const catFilter    = document.getElementById('exp-filter-cat')?.value || '';
+const catFilter    = document.getElementById('exp-filter-cat')?.value    || '';
+  const paidByFilter = document.getElementById('exp-filter-paidby')?.value || '';
   const personFilter = document.getElementById('exp-filter-person')?.value || '';
   const members      = groupData.members || [];
-
   let expenses = [...(groupData.expenses || [])].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
   if (catFilter)    expenses = expenses.filter(e => e.category === catFilter);
+  if (paidByFilter) expenses = expenses.filter(e => e.paidBy === paidByFilter);
   if (personFilter) expenses = expenses.filter(e => e.splits && personFilter in e.splits);
 
   // Build rows: one row per expense, columns for each member's share
@@ -2534,11 +2598,57 @@ function downloadExpensesExcel() {
   ];
   XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
 
-  const filterTag = [catFilter?catFilter.replace(/^\S+\s/,''):'', personFilter].filter(Boolean).join('_') || 'All';
+  const filterTag = [catFilter?catFilter.replace(/^\S+\s/,''):'', paidByFilter?'paidby_'+paidByFilter:'', personFilter].filter(Boolean).join('_') || 'All';
   const tripName  = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
   XLSX.writeFile(wb, `${tripName}_Expenses_${filterTag}.xlsx`);
   toast('Expenses downloaded!','ok');
+
+function downloadExpensesExcel() {
+  const catFilter    = document.getElementById('exp-filter-cat')?.value    || '';
+  const paidByFilter = document.getElementById('exp-filter-paidby')?.value || '';
+  const personFilter = document.getElementById('exp-filter-person')?.value || '';
+  const members      = groupData.members || [];
+
+  let expenses = [...(groupData.expenses || [])].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  if (catFilter)    expenses = expenses.filter(e => e.category === catFilter);
+  if (paidByFilter) expenses = expenses.filter(e => e.paidBy === paidByFilter);
+  if (personFilter) expenses = expenses.filter(e => e.splits && personFilter in e.splits);
+
+  const header = ['Date','Description','Category','Total Amount (₹)','Paid By',
+    ...members.map(m => m+' Share (₹)'), 'Notes'];
+
+  const rows = expenses.map(exp => {
+    const splits = exp.splits || {};
+    return [
+      exp.date ? new Date(exp.date).toLocaleString('en-IN') : '',
+      exp.description || '',
+      exp.category || '',
+      +exp.amount || 0,
+      exp.paidBy || '',
+      ...members.map(m => +(splits[m]||0)),
+      exp.notes || ''
+    ];
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  ws['!cols'] = [
+    {wch:18},{wch:28},{wch:22},{wch:16},{wch:14},
+    ...members.map(()=>({wch:16})),
+    {wch:24}
+  ];
+  XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
+
+  const filterTag = [
+    catFilter    ? catFilter.replace(/^\S+\s/,'') : '',
+    paidByFilter ? 'paidby_'+paidByFilter : '',
+    personFilter ? personFilter : ''
+  ].filter(Boolean).join('_') || 'All';
+  const tripName = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
+  XLSX.writeFile(wb, `${tripName}_Expenses_${filterTag}.xlsx`);
+  toast('Expenses downloaded!','ok');
 }
+
 
 function downloadRepaymentExcel() {
   const repayments = [...(groupData.repayments || [])].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
