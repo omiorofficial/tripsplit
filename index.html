@@ -131,7 +131,7 @@ a{color:inherit;text-decoration:none;}
 .hero-card:hover{opacity:.92;}
 .hero-card.full{grid-column:1/-1;}
 .hero-card .hc-label{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
-.hero-card .hc-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;}
+.hero-card .hc-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;}
 .hero-card .hc-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;}
 .hero-card .hc-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.13);border-radius:20px;padding:3px 10px;font-size:10px;color:rgba(255,255,255,0.75);margin-top:10px;}
 .progress-wrap{margin-top:10px;}
@@ -146,13 +146,27 @@ a{color:inherit;text-decoration:none;}
   gap:14px;
   margin-bottom:10px;
 }
+
 .bal-card{
   background:var(--surface);
   border:1px solid var(--border);
   border-radius:var(--r);
   padding:18px 20px;
-  min-height:140px;box-shadow:0 1px 4px rgba(91,95,207,0.07);cursor:pointer;transition:border-color .2s,transform .15s;animation:dashEntry .4s both;}
-.bal-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+  min-height:140px;
+  box-shadow:0 1px 4px rgba(91,95,207,0.07);
+  cursor:pointer;
+  transition:border-color .2s,transform .15s;
+  animation:dashEntry .4s both;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.bal-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-1px);
+}
+
 .bal-card .bc-name{
   font-size:13px;
   font-weight:700;
@@ -167,15 +181,99 @@ a{color:inherit;text-decoration:none;}
   overflow:hidden;
   text-overflow:ellipsis;
 }
-.bal-card .bc-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;}
+
+.bal-card .bc-av{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  font-weight:700;
+  color:#fff;
+  flex-shrink:0;
+}
+
 .bal-card .bc-amt{
   font-family:'Syne',sans-serif;
-  font-size:clamp(22px,2vw,38px);
-  line-height:1.1;
-  word-break:break-word;font-weight:800;margin-bottom:2px;}
-.bal-card .bc-lbl{font-size:11px;display:flex;align-items:center;gap:3px;margin-top:3px;}
-.bal-card .bc-bar{height:3px;border-radius:2px;margin-top:10px;overflow:hidden;}
-.bal-card .bc-bar-fill{height:100%;border-radius:2px;}
+  font-size:30px;
+  font-weight:800;
+  line-height:1.05;
+  word-break:break-word;
+  margin-bottom:4px;
+}
+
+.bal-card .bc-lbl{
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin-top:4px;
+}
+
+.bal-card .bc-bar{
+  height:4px;
+  border-radius:4px;
+  margin-top:14px;
+  overflow:hidden;
+  background:rgba(0,0,0,0.05);
+}
+
+.bal-card .bc-bar-fill{
+  height:100%;
+  border-radius:4px;
+}
+
+/* MOBILE FIX */
+
+
+
+@media(max-width:480px){
+
+  .balance-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .bal-card{
+    min-height:120px;
+    padding:14px;
+  }
+
+  .bal-card .bc-name{
+    font-size:12px;
+    gap:6px;
+  }
+
+  .bal-card .bc-av{
+    width:20px;
+    height:20px;
+    font-size:9px;
+  }
+
+.bal-card .bc-amt{
+  font-size:28px;
+  letter-spacing:-1px;
+}
+
+  .bal-card .bc-amt{
+  font-family:'Syne',sans-serif;
+  font-size:24px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin-bottom:6px;
+}
+
+  .bal-card .bc-lbl{
+    font-size:11px;
+  }
+
+}
 
 /* Payments by member — new rich cards */
 .paid-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
