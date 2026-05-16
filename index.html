@@ -35,7 +35,6 @@
   --success:#2ecc71;
   --r:16px; --r2:12px; --r3:8px;
 }
-/* Ensure font-display swap so text renders immediately with fallbacks */
 @font-face { font-family:'Syne'; font-display:swap; }
 @font-face { font-family:'DM Sans'; font-display:swap; }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -121,258 +120,48 @@ a{color:inherit;text-decoration:none;}
 .sec-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;color:var(--text);}
 .sec-title .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 .pos{color:var(--success);} .neg{color:var(--danger);} .zero{color:var(--muted2);}
-.hist-item,.exp-card,.settle-card,.group-card{contain:layout style;}
-@keyframes dashEntry{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes barShimmer{0%{left:-100%}100%{left:200%}}
+.paid-row,.cat-row,.hist-item,.exp-card,.settle-card,.group-card{contain:layout style;}
 
 /* Hero stats */
 .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.hero-card{background:#3f43b0;border:none;border-radius:var(--r);padding:18px 20px;box-shadow:0 4px 18px rgba(63,67,176,0.22);cursor:pointer;transition:opacity .2s;position:relative;overflow:hidden;}
-.hero-card:hover{opacity:.92;}
+.hero-card{background:#3f43b0;border:none;border-radius:var(--r);padding:18px 20px;box-shadow:0 4px 18px rgba(63,67,176,0.22);}
 .hero-card.full{grid-column:1/-1;}
-.hero-card .hc-label{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
-.hero-card .hc-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;}
+.hero-card .hc-label{font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.hero-card .hc-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;}
 .hero-card .hc-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;}
-.hero-card .hc-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.13);border-radius:20px;padding:3px 10px;font-size:10px;color:rgba(255,255,255,0.75);margin-top:10px;}
 .progress-wrap{margin-top:10px;}
 .progress-bar{height:6px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;margin-top:4px;}
 .progress-fill{height:100%;border-radius:3px;background:var(--success);transition:width .4s ease;}
 .progress-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;}
 
-/* Net balance cards */
-.balance-grid{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-bottom:10px;
-}
-
-.bal-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:18px 20px;
-  min-height:140px;
-  box-shadow:0 1px 4px rgba(91,95,207,0.07);
-  cursor:pointer;
-  transition:border-color .2s,transform .15s;
-  animation:dashEntry .4s both;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-
-.bal-card:hover{
-  border-color:var(--accent);
-  transform:translateY(-1px);
-}
-
-.bal-card .bc-name{
-  font-size:13px;
-  font-weight:700;
-  color:var(--text);
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  margin-bottom:10px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.bal-card .bc-av{
-  width:24px;
-  height:24px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:10px;
-  font-weight:700;
-  color:#fff;
-  flex-shrink:0;
-}
-
-.bal-card .bc-amt{
-  font-family:'Syne',sans-serif;
-  font-size:30px;
-  font-weight:800;
-  line-height:1.05;
-  word-break:break-word;
-  margin-bottom:4px;
-}
-
-.bal-card .bc-lbl{
-  font-size:13px;
-  display:flex;
-  align-items:center;
-  gap:4px;
-  margin-top:4px;
-}
-
-.bal-card .bc-bar{
-  height:4px;
-  border-radius:4px;
-  margin-top:14px;
-  overflow:hidden;
-  background:rgba(0,0,0,0.05);
-}
-
-.bal-card .bc-bar-fill{
-  height:100%;
-  border-radius:4px;
-}
-
-/* MOBILE FIX */
-
-@media(max-width:540px){
-
-  .balance-grid{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-
-  .bal-card{
-    width:100%;
-    min-height:auto;
-    padding:14px 16px;
-    box-sizing:border-box;
-  }
-
-  .bal-card .bc-amt{
-    font-size:28px;
-    letter-spacing:-1px;
-    white-space:nowrap;
-  }
-
-  .bal-card .bc-name{
-    font-size:12px;
-  }
-
-  .bal-card .bc-lbl{
-    font-size:12px;
-  }
-
-  /* Payment cards */
-  .paid-row{
-    padding:10px;
-    overflow:hidden;
-  }
-
-  .pr-info{
-    min-width:0;
-    flex:1;
-    overflow:hidden;
-  }
-
-  .pr-name-text{
-    font-size:12px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    max-width:90px;
-  }
-
-  .pr-amt-inline{
-    font-size:12px;
-    white-space:nowrap;
-    flex-shrink:0;
-  }
-
-  .pr-top{
-    gap:4px;
-    flex-wrap:nowrap;
-    overflow:hidden;
-  }
-
-  .pr-stats{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-  }
-
-  .pr-stat{
-    border-right:1px solid var(--border);
-    border-bottom:none;
-    padding:2px 6px;
-    min-width:0;
-  }
-
-  .pr-stat:first-child{ padding-left:0; }
-  .pr-stat:last-child{ border-right:none; }
-
-  .pr-stat-val{
-    font-size:10px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-
-  .pr-stat-lbl{ font-size:9px; }
-
-  .pr-av{
-    width:28px !important;
-    height:28px !important;
-    font-size:11px !important;
-    flex-shrink:0;
-  }
-
-}
-
-/* Payments by member — new rich cards */
+/* Who paid */
 .paid-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
-.paid-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:border-color .2s;animation:dashEntry .4s both;}
-.paid-row:hover{border-color:var(--accent);}
-.paid-row:hover .pr-arrow{opacity:1;}
-.pr-arrow{opacity:0;transition:opacity .2s;color:var(--accent);font-size:16px;align-self:center;flex-shrink:0;margin-left:auto;}
-.pr-rank{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
-.pr-rank-1{background:#FAEEDA;color:#854F0B;}
-.pr-rank-2{background:#f5f5f0;color:#5F5E5A;}
-.pr-rank-3{background:#e8f5e9;color:#2e7d32;}
-.paid-row .pr-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#fff;flex-shrink:0;}
+.paid-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(91,95,207,0.06);}
+.paid-row .pr-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
 .paid-row .pr-info{flex:1;min-width:0;}
-.pr-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
-.pr-name-text{font-size:14px;font-weight:500;color:var(--text);}
-.pr-badge{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;}
-.pr-you{background:#eef2ff;color:#3C3489;}
-.pr-top-payer{background:#FAEEDA;color:#854F0B;}
-.pr-meta{font-size:11px;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
-.pr-pill{display:inline-flex;align-items:center;gap:3px;background:var(--surface2);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--muted2);}
-.pr-amt-inline{margin-left:auto;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
-.paid-bar-track{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:8px;position:relative;}
-.paid-bar-fill{height:100%;border-radius:3px;position:relative;overflow:hidden;}
-.bar-shimmer-inner{position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);animation:barShimmer 2.2s infinite;}
-.pr-stats{display:flex;gap:0;}
-.pr-stat{flex:1;display:flex;flex-direction:column;gap:1px;border-right:1px solid var(--border);padding:0 10px;}
-.pr-stat:first-child{padding-left:0;}
-.pr-stat:last-child{border-right:none;}
-.pr-stat-val{font-size:12px;font-weight:500;color:var(--text);}
-.pr-stat-lbl{font-size:10px;color:var(--muted2);}
+.paid-row .pr-name{font-size:13px;font-weight:500;display:flex;justify-content:space-between;color:var(--text);}
+.paid-row .pr-name span{font-family:'Syne',sans-serif;font-weight:700;}
+.paid-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:5px;overflow:hidden;}
+.paid-fill{height:100%;border-radius:2px;transition:width .4s ease;}
+.paid-row .pr-share{font-size:11px;color:var(--muted2);margin-top:3px;}
 
-/* Category breakdown — new rich cards */
-.cat-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
-.cat-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:border-color .2s;animation:dashEntry .4s both;}
-.cat-row:hover{border-color:var(--accent);}
-.cat-row:hover .pr-arrow{opacity:1;}
-.cat-icon-wrap{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+/* Category breakdown */
+.cat-list{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
+.cat-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:11px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(91,95,207,0.05);}
+.cat-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
 .cat-info{flex:1;min-width:0;}
-.cat-name-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px;}
-.cat-name-row .cn{font-size:13px;color:var(--muted2);}
-.cat-name-row .ca{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
-.cat-pct-badge{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;margin-left:6px;}
-.cat-sub{font-size:11px;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.cat-tag{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;}
-.cat-bar-track{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:8px;position:relative;}
-.cat-bar-fill{height:100%;border-radius:3px;position:relative;overflow:hidden;}
-.cat-stats{display:flex;gap:0;}
-.cat-stat{flex:1;display:flex;flex-direction:column;gap:1px;border-right:1px solid var(--border);padding:0 10px;}
-.cat-stat:first-child{padding-left:0;}
-.cat-stat:last-child{border-right:none;}
-.cat-stat-val{font-size:12px;font-weight:500;color:var(--text);}
-.cat-stat-lbl{font-size:10px;color:var(--muted2);}
-.dash-tip{font-size:11px;color:var(--muted2);background:var(--surface2);border-radius:var(--r2);padding:7px 12px;display:flex;align-items:center;gap:6px;margin-bottom:14px;}
+.cat-name-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;}
+.cat-name-row .cn{color:var(--muted2);}
+.cat-name-row .ca{font-family:'Syne',sans-serif;font-weight:700;color:var(--text);}
+.cat-bar{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.cat-fill{height:100%;border-radius:2px;background:var(--accent3);}
+
+/* Balance cards */
+.balance-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px;}
+.bal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:0 1px 4px rgba(91,95,207,0.07);}
+.bal-card .bc-name{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bal-card .bc-amt{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+.bal-card .bc-lbl{font-size:11px;margin-top:3px;}
 
 /* Settlements */
 .settle-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 6px rgba(91,95,207,0.07);}
@@ -385,6 +174,21 @@ a{color:inherit;text-decoration:none;}
 .settle-amt{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--accent2);white-space:nowrap;}
 .settle-actions{display:flex;align-items:center;gap:8px;}
 .settle-me-badge{background:#eef2ff;border:1px solid #c7d0f8;color:var(--accent);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;}
+
+/* ── FILTER BAR ── */
+.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;box-shadow:0 1px 4px rgba(91,95,207,0.05);}
+.filter-group{display:flex;flex-direction:column;gap:4px;min-width:120px;flex:1;}
+.filter-group label{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+.filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:6px 10px;color:var(--text);font-size:12px;outline:none;width:100%;appearance:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.filter-select:focus{border-color:var(--accent);}
+.filter-divider{width:1px;height:36px;background:var(--border);align-self:flex-end;margin:0 2px;}
+.filter-label-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted2);align-self:flex-end;padding-bottom:9px;white-space:nowrap;}
+.filter-actions{display:flex;gap:6px;align-items:flex-end;margin-left:auto;}
+.filter-count{font-size:11px;color:var(--muted2);align-self:flex-end;padding-bottom:9px;white-space:nowrap;}
+.filter-count strong{color:var(--accent);font-family:'Syne',sans-serif;}
+.btn-clear-filters{background:none;border:1px solid var(--border2);border-radius:var(--r3);padding:6px 10px;font-size:11px;color:var(--muted2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.btn-clear-filters:hover{border-color:var(--danger);color:var(--danger);}
+.active-filter-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent2);margin-left:4px;vertical-align:middle;}
 
 /* ── EXPENSE FORM ── */
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;box-shadow:0 2px 10px rgba(91,95,207,0.07);}
@@ -568,9 +372,6 @@ a{color:inherit;text-decoration:none;}
 
 /* ── MOBILE RESPONSIVE ── */
 @media(max-width:480px){
-#tab-expenses .sec-header{flex-direction:column;align-items:flex-start;}
-  #tab-expenses .sec-header > div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;}
-  #tab-expenses .sec-header > div:last-child button{grid-column:1/-1;width:100%;}
   .topbar{padding:10px 12px;}
   .tb-group-name{display:none;}
   .user-pill .name{display:none;}
@@ -591,9 +392,6 @@ a{color:inherit;text-decoration:none;}
   .sec-header{flex-direction:column;align-items:flex-start;gap:8px;}
   .sec-header > div:last-child{display:flex;gap:6px;width:100%;}
   .sec-header select{flex:1;font-size:11px;}
-  .pr-stats,.cat-stats{flex-wrap:wrap;}
-  .pr-stat,.cat-stat{min-width:80px;border-bottom:1px solid var(--border);border-right:none;padding:4px 0;}
-  .pr-stat:last-child,.cat-stat:last-child{border-bottom:none;}
   .exp-card{padding:12px;}
   .exp-card-left .ec-desc{font-size:13px;}
   .exp-card-right .ec-amt{font-size:15px;}
@@ -612,6 +410,8 @@ a{color:inherit;text-decoration:none;}
   .back-btn{font-size:12px;margin-bottom:12px;}
   .admin-card{padding:16px;}
   #home{padding:12px;}
+  .filter-bar{gap:6px;}
+  .filter-group{min-width:100px;}
 }
 
 @media(max-width:360px){
@@ -620,16 +420,12 @@ a{color:inherit;text-decoration:none;}
   .balance-grid{grid-template-columns:1fr 1fr;}
   .person-exp-grid{grid-template-columns:1fr;}
   .tab{padding:10px 8px;font-size:10px;}
+  .filter-group{min-width:80px;}
 }
 @keyframes shine {
-  0% {
-    transform: translateX(-120%);
-  }
-  100% {
-    transform: translateX(260%);
-  }
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(260%); }
 }
-
 </style>
 </head>
 <body>
@@ -719,20 +515,13 @@ a{color:inherit;text-decoration:none;}
       <div id="dash-loading" class="loading"><div class="spin"></div><div>Loading...</div></div>
       <div id="dash-content" style="display:none">
         <div class="hero-stats" id="hero-stats"></div>
-        <div class="sec-title" style="margin-bottom:10px"><span class="dot" style="background:var(--success)"></span>Net Balances</div>
+        <div class="sec-title" id="net-bal-title" style="margin-bottom:10px"><span class="dot"></span>Net Balances</div>
         <div class="balance-grid" id="balance-grid"></div>
-        <div class="dash-tip">👆 Click any card above to see that person's expenses</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="sec-title" style="margin-bottom:0"><span class="dot"></span>Payments by Member</div>
-          <span style="font-size:11px;color:var(--muted2)">tap card → filtered expenses</span>
-        </div>
+        <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Payments by Member</div>
         <div class="paid-list" id="paid-list"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="sec-title" style="margin-bottom:0"><span class="dot" style="background:var(--accent3)"></span>Spend by Category</div>
-          <span style="font-size:11px;color:var(--muted2)">tap card → filtered expenses</span>
-        </div>
+        <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Spend by Category</div>
         <div class="cat-list" id="cat-list"></div>
-        <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Who Pays Whom</div>
+        <div class="sec-title" id="who-pays-title" style="margin-bottom:10px"><span class="dot"></span>Who Pays Whom</div>
         <div id="settlements-list"></div>
         <div id="dash-pending-section" style="display:none">
           <div class="sec-title" style="margin-bottom:10px;margin-top:20px">
@@ -749,10 +538,12 @@ a{color:inherit;text-decoration:none;}
       <div class="back-btn" onclick="goHome()">← All Trips</div>
       <div class="sec-title" style="margin-bottom:10px"><span class="dot"></span>Total Expenditure Per Person</div>
       <div id="person-exp-summary" style="margin-bottom:20px"></div>
-      <div class="sec-header">
-        <div class="sec-title"><span class="dot"></span>All Expenses</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%">
-          <select id="exp-filter-cat" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
+
+      <!-- EXPENSES FILTER BAR (3 filters) -->
+      <div class="filter-bar" id="exp-filter-bar">
+        <div class="filter-group">
+          <label>Category</label>
+          <select class="filter-select" id="exp-filter-cat" onchange="renderExpensesTab()">
             <option value="">All Categories</option>
             <option>🏨 Accommodation</option>
             <option>🍽️ Food & Drinks</option>
@@ -762,16 +553,27 @@ a{color:inherit;text-decoration:none;}
             <option>💊 Medical</option>
             <option>📦 Miscellaneous</option>
           </select>
-          <select id="exp-filter-paidby" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
-            <option value="">Paid by: All</option>
+        </div>
+        <div class="filter-group">
+          <label>Who Paid</label>
+          <select class="filter-select" id="exp-filter-paidby" onchange="renderExpensesTab()">
+            <option value="">All Payers</option>
           </select>
-          <select id="exp-filter-person" onchange="renderExpensesTab()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);padding:5px 10px;color:var(--text);font-size:12px;outline:none;">
-            <option value="">Split: All</option>
+        </div>
+        <div class="filter-group">
+          <label>In Split</label>
+          <select class="filter-select" id="exp-filter-person" onchange="renderExpensesTab()">
+            <option value="">All Members</option>
           </select>
-          <button onclick="downloadExpensesExcel()" style="background:var(--accent);color:#fff;border:none;border-radius:var(--r3);padding:7px 12px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;">⬇️ Excel</button>
+        </div>
+        <div class="filter-actions">
+          <button class="btn-clear-filters" onclick="clearExpenseFilters()" title="Clear all filters">✕ Clear</button>
+          <button class="refresh-btn" onclick="downloadExpensesExcel()" title="Download filtered Excel">⬇️ Excel</button>
         </div>
       </div>
-      <div id="expenses-list" style="margin-top:12px"></div>
+      <div id="exp-filter-count" style="font-size:11px;color:var(--muted2);margin-bottom:10px;text-align:right"></div>
+
+      <div id="expenses-list"></div>
     </div>
 
     <!-- ADD EXPENSE -->
@@ -820,7 +622,6 @@ a{color:inherit;text-decoration:none;}
     <div class="tab-content" id="tab-repay">
       <div class="back-btn" onclick="goHome()">← All Trips</div>
 
-      <!-- Pending confirmations for me (as receiver) -->
       <div id="repay-pending-section" style="display:none">
         <div class="repay-section-title">
           <span>⏳</span> Awaiting Your Confirmation
@@ -830,7 +631,6 @@ a{color:inherit;text-decoration:none;}
       </div>
 
       <div class="repay-card">
-        <!-- UPI ID setup strip -->
         <div class="upi-profile-card" id="upi-setup-card">
           <div class="upc-title">💳 Your UPI ID (optional)</div>
           <div class="upc-sub">Set your UPI ID so others can scan your QR to pay you directly.</div>
@@ -844,8 +644,6 @@ a{color:inherit;text-decoration:none;}
 
         <div class="repay-form">
           <h3>Record a Repayment</h3>
-
-          <!-- Payment method -->
           <div style="font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Payment Method</div>
           <div class="pay-method-row">
             <button class="pay-method-btn active" id="pm-cash" onclick="setPayMethod('cash')">
@@ -865,7 +663,6 @@ a{color:inherit;text-decoration:none;}
             <div class="field"><label>Note (optional)</label><input type="text" id="rep-note" placeholder="Transaction ID / Remark"></div>
           </div>
 
-          <!-- UPI QR Section -->
           <div id="upi-qr-section" style="display:none">
             <div class="upi-section">
               <h4>📲 Receiver's UPI QR</h4>
@@ -885,13 +682,59 @@ a{color:inherit;text-decoration:none;}
     <!-- HISTORY -->
     <div class="tab-content" id="tab-history">
       <div class="back-btn" onclick="goHome()">← All Trips</div>
-      <div class="sec-header">
-        <div class="sec-title"><span class="dot"></span>All Transactions</div>
-        <div style="display:flex;gap:8px;align-items:center">
+
+      <!-- HISTORY FILTER BAR (5 filters in 2 groups) -->
+      <div class="filter-bar" id="hist-filter-bar">
+        <!-- Expense filters -->
+        <div class="filter-label-section">📋 Expenses</div>
+        <div class="filter-group">
+          <label>Category</label>
+          <select class="filter-select" id="hist-filter-cat" onchange="renderHistory()">
+            <option value="">All</option>
+            <option>🏨 Accommodation</option>
+            <option>🍽️ Food & Drinks</option>
+            <option>🚗 Transport</option>
+            <option>🎟️ Activities</option>
+            <option>🛒 Shopping</option>
+            <option>💊 Medical</option>
+            <option>📦 Miscellaneous</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Who Paid</label>
+          <select class="filter-select" id="hist-filter-paidby" onchange="renderHistory()">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>In Split</label>
+          <select class="filter-select" id="hist-filter-insplit" onchange="renderHistory()">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="filter-divider"></div>
+        <!-- Repayment filters -->
+        <div class="filter-label-section">💸 Repayments</div>
+        <div class="filter-group">
+          <label>From</label>
+          <select class="filter-select" id="hist-filter-repfrom" onchange="renderHistory()">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>To</label>
+          <select class="filter-select" id="hist-filter-repto" onchange="renderHistory()">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="filter-actions">
+          <button class="btn-clear-filters" onclick="clearHistoryFilters()" title="Clear all filters">✕ Clear</button>
+          <button class="refresh-btn" onclick="downloadHistoryExcel()" title="Download filtered Excel">⬇️ Excel</button>
           <button class="refresh-btn" onclick="loadGroupData()">⟳</button>
-          <button onclick="downloadHistoryExcel()" style="background:var(--accent);color:#fff;border:none;border-radius:var(--r3);padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;">⬇️ Excel</button>
         </div>
       </div>
+      <div id="hist-filter-count" style="font-size:11px;color:var(--muted2);margin-bottom:10px;text-align:right"></div>
+
       <div id="history-list"></div>
     </div>
 
@@ -1032,34 +875,21 @@ let splitType = 'equal';
 let pendingSettle = null;
 let ADMIN_NAME = 'Gaurav123';
 let ADMIN_PIN  = '4447';
-let payMethod = 'cash'; // 'cash' | 'upi'
+let payMethod = 'cash';
 let _repayQRInstance = null;
 
-// ─── PENDING REPAYMENTS HELPERS ─────────────────────────────
-// Pending repayments are stored in Google Sheets via GAS so they sync
-// across ALL devices. UPI IDs remain localStorage (per-user preference).
-// Each entry: { id, groupId, from, to, amount, note, method, upiId, timestamp, status, recordedBy }
-// status: 'pending' | 'confirmed' | 'rejected'
-
+// ─── PENDING REPAYMENTS HELPERS ──────────────────────────
 function UPI_KEY(name) { return `ts_upi_${name}`; }
 function getUpiId(name) { return localStorage.getItem(UPI_KEY(name)) || ''; }
 function setUpiId(name, id) { localStorage.setItem(UPI_KEY(name), id); }
-
-// In-memory cache of pending repayments for the current group
 let _pendingCache = [];
-
-// Returns cached list synchronously (always call loadGroupData first which populates it)
-function getPendingRepayments(gid) {
-  return _pendingCache.filter(p => p.groupId === gid);
-}
+function getPendingRepayments(gid) { return _pendingCache.filter(p => p.groupId === gid); }
 
 // ─── BOOT ─────────────────────────────────────────────────
-// DOMContentLoaded fires before images/fonts — much faster than window.onload
 document.addEventListener('DOMContentLoaded', () => {
   GAS_URL = 'https://script.google.com/macros/s/AKfycbyvNHGHBFuCjMynF1VTv7eKb0M_dzj59w-l8pIq5p7EqjultttCT-yNeiaO0QuFDIGQLQ/exec';
   ADMIN_NAME = 'Gaurav123';
   ADMIN_PIN  = '4447';
-
   const saved = localStorage.getItem('ts_user');
   if (saved) {
     try {
@@ -1076,19 +906,15 @@ async function doLogin() {
   const pin  = document.getElementById('lp').value.trim();
   if (!name) { toast('Enter your name','err'); return; }
   if (pin.length !== 4 || isNaN(pin)) { toast('PIN must be 4 digits','err'); return; }
-
   const isAdmin = (name === ADMIN_NAME && pin === ADMIN_PIN);
-
   me = { name, pin, color: COLORS[Math.abs(hash(name)) % COLORS.length], isAdmin };
   localStorage.setItem('ts_user', JSON.stringify(me));
   showApp();
 }
 
 function logout() {
-  // Clear all cached data for this user
   if (me) {
     localStorage.removeItem(CACHE_KEY_GROUPS());
-    // Clear any cached group data
     Object.keys(localStorage).filter(k => k.startsWith('ts_gdata_')).forEach(k => localStorage.removeItem(k));
   }
   localStorage.removeItem('ts_user');
@@ -1129,7 +955,6 @@ function showApp() {
   document.getElementById('admin-badge').style.display      = me.isAdmin ? '' : 'none';
   document.getElementById('create-group-btn').style.display = me.isAdmin ? '' : 'none';
   document.getElementById('admin-tab').style.display        = me.isAdmin ? '' : 'none';
-  // Load saved UPI ID
   const savedUpi = getUpiId(me.name);
   const upiEl = document.getElementById('my-upi-id');
   if (upiEl && savedUpi) upiEl.value = savedUpi;
@@ -1154,16 +979,10 @@ async function loadGroups() {
   const groupsListEl = document.getElementById('groups-list');
   document.getElementById('groups-loading').style.display = 'none';
   groupsListEl.style.display = 'block';
-
-  // 1. Render from cache instantly (stale-while-revalidate)
   const cached = localStorage.getItem(CACHE_KEY_GROUPS());
   if (cached) {
-    try {
-      groups = JSON.parse(cached);
-      renderGroups(true); // true = is stale/cached
-    } catch(e) { localStorage.removeItem(CACHE_KEY_GROUPS()); }
+    try { groups = JSON.parse(cached); renderGroups(true); } catch(e) { localStorage.removeItem(CACHE_KEY_GROUPS()); }
   } else {
-    // No cache: show skeletons while fetching
     const skeletonCard = `<div class="group-card" style="pointer-events:none">
       <div class="gc-left"><div class="gc-icon" style="background:#e8e8f0;animation:shimmer 1.2s infinite"></div>
       <div class="gc-info">
@@ -1174,8 +993,6 @@ async function loadGroups() {
     </div>`;
     groupsListEl.innerHTML = skeletonCard.repeat(3);
   }
-
-  // 2. Fetch fresh data in background
   try {
     const res = await gas('getGroups', { userName: me.name });
     groups = res.groups || [];
@@ -1185,7 +1002,6 @@ async function loadGroups() {
     if (!cached) {
       groupsListEl.innerHTML = `<div style="color:var(--danger);font-size:13px;padding:20px;text-align:center">Failed to load.<br><button class="btn btn-sm" style="width:auto;margin-top:12px" onclick="loadGroups()">Retry</button></div>`;
     }
-    // If we had cache, silently keep showing it — no error toast
   }
 }
 
@@ -1233,14 +1049,12 @@ async function openGroup(gid) {
 
 async function loadGroupData() {
   if (!currentGroup) return;
-
-  // 1. Render from cache instantly if available
   const cached = localStorage.getItem(CACHE_KEY_GDATA(currentGroup.id));
   if (cached) {
     try {
       groupData = JSON.parse(cached);
       currentGroup.members = groupData.members || [];
-      _pendingCache = groupData.pending || [];   // restore from cache instantly
+      _pendingCache = groupData.pending || [];
       document.getElementById('dash-loading').style.display = 'none';
       document.getElementById('dash-content').style.display = 'block';
       renderDashboard();
@@ -1252,26 +1066,22 @@ async function loadGroupData() {
     document.getElementById('dash-loading').style.display = 'block';
     document.getElementById('dash-content').style.display = 'none';
   }
-
-  // 2. Fetch fresh in background (always — triggered by mutation or first open)
   try {
     const res = await gas('getGroupData', { groupId: currentGroup.id });
     groupData = res.data || { expenses:[], repayments:[], members:[], pending:[] };
     currentGroup.members = groupData.members || [];
     _pendingCache = groupData.pending || [];
-    // Store pending in cache too so it's instant on next load
     localStorage.setItem(CACHE_KEY_GDATA(currentGroup.id), JSON.stringify(groupData));
     document.getElementById('dash-loading').style.display = 'none';
     document.getElementById('dash-content').style.display = 'block';
-    renderDashboard();       // includes renderPendingOnDashboard which reads _pendingCache
+    renderDashboard();
     populateDropdowns();
     renderHistory();
-    renderRepay();           // reads _pendingCache — must run after it's populated above
+    renderRepay();
     document.getElementById('last-upd').textContent = 'Updated ' + new Date().toLocaleTimeString();
     if (me.isAdmin) renderAdminMembers();
   } catch(e) {
     if (!cached) toast('Error loading data: '+e.message,'err');
-    // If we had cache, silently keep showing it
   }
 }
 
@@ -1293,27 +1103,29 @@ function calcBalances() {
     if (!(r.to in bal)) bal[r.to] = 0;
     bal[r.from] += +r.amount; bal[r.to] -= +r.amount;
   });
+  Object.keys(bal).forEach(k => { bal[k] = Math.round(bal[k]); });
   return bal;
 }
 
 function calcSettlements(bal) {
   const debtors = [], creds = [];
   Object.entries(bal).forEach(([n,b]) => {
-    if (b < -0.01) debtors.push({name:n,amount:-b});
-    if (b > 0.01) creds.push({name:n,amount:b});
+    if (b < -0) debtors.push({name:n, amount:-b});
+    if (b > 0)  creds.push({name:n, amount:b});
   });
   debtors.sort((a,b)=>b.amount-a.amount); creds.sort((a,b)=>b.amount-a.amount);
   const txns=[]; let i=0,j=0;
-  while(i<debtors.length&&j<creds.length){
-    const pay=Math.min(debtors[i].amount,creds[j].amount);
-    txns.push({from:debtors[i].name,to:creds[j].name,amount:pay});
-    debtors[i].amount-=pay; creds[j].amount-=pay;
-    if(debtors[i].amount<0.01)i++; if(creds[j].amount<0.01)j++;
+  while(i<debtors.length && j<creds.length){
+    const pay = Math.round(Math.min(debtors[i].amount, creds[j].amount));
+    if (pay >= 1) txns.push({from:debtors[i].name, to:creds[j].name, amount:pay});
+    debtors[i].amount -= pay; creds[j].amount -= pay;
+    if (debtors[i].amount < 1) i++;
+    if (creds[j].amount < 1) j++;
   }
   return txns;
 }
 
-// ─── RENDER ───────────────────────────────────────────────
+// ─── RENDER DASHBOARD ─────────────────────────────────────
 function renderDashboard() {
   document.getElementById('dash-loading').style.display = 'none';
   document.getElementById('dash-content').style.display = 'block';
@@ -1322,333 +1134,145 @@ function renderDashboard() {
 
   const totalSpent  = groupData.expenses.reduce((s,e)=>s+(+e.amount||0),0);
   const totalRepaid = groupData.repayments.reduce((s,r)=>s+(+r.amount||0),0);
-  const totalPending = Math.max(0, totalSpent - totalRepaid);
-  const repaidPct = totalSpent > 0 ? Math.min(100, (totalRepaid/totalSpent)*100) : 0;
   const myPaid = groupData.expenses.filter(e=>e.paidBy===me.name).reduce((s,e)=>s+(+e.amount||0),0);
 
   document.getElementById('hero-stats').innerHTML = `
-    <div class="hero-card" onclick="switchTab('expenses')" style="background:#3f43b0;">
-      <div class="hc-label">🧾 Total spent</div>
+    <div class="hero-card" onclick="switchTab('expenses')" style="cursor:pointer">
+      <div class="hc-label">Total Spent ↗</div>
       <div class="hc-val">₹${fmt(totalSpent)}</div>
       <div class="hc-sub">${groupData.expenses.length} expenses · ${members.length} members</div>
-      <div class="hc-tag">↗ view all expenses</div>
     </div>
-    <div class="hero-card" onclick="switchTabFiltered('expenses','','${me.name}')" style="background:#2d5fa8;">
-      <div class="hc-label">👤 You paid</div>
+    <div class="hero-card" onclick="switchTabFiltered('expenses','','','${me.name}','')" style="cursor:pointer">
+      <div class="hc-label">You Paid ↗</div>
       <div class="hc-val" style="color:var(--accent2)">₹${fmt(myPaid)}</div>
       <div class="hc-sub">${totalSpent>0?((myPaid/totalSpent)*100).toFixed(0):0}% of total</div>
-      <div class="hc-tag">↗ your expenses</div>
     </div>
-    <div class="hero-card full">
-      <div class="hc-label">Debt Settlement Progress</div>
-      ${(()=>{
-        // Step 1: Current remaining settlements (after all repayments applied to balances)
-        const settles = calcSettlements(calcBalances());
+    ${(()=>{
+      const settles = calcSettlements(calcBalances());
+      if (!settles.length) return '';
+      const pairPaid = {};
+      groupData.repayments.forEach(r => {
+        if (!pairPaid[r.from]) pairPaid[r.from] = {};
+        pairPaid[r.from][r.to] = (pairPaid[r.from][r.to] || 0) + (+r.amount || 0);
+      });
+      const debtorMap = {};
+      settles.forEach(t => {
+        const alreadyPaid = Math.round((pairPaid[t.from]?.[t.to]) || 0);
+        const required    = t.amount + alreadyPaid;
+        if (!debtorMap[t.from]) debtorMap[t.from] = { required: 0, paid: 0 };
+        debtorMap[t.from].required += required;
+        debtorMap[t.from].paid     += alreadyPaid;
+      });
+      return `<div class="hero-card full">
+        <div class="hc-label">Debt Settlement Progress</div>
+        ${Object.entries(debtorMap).map(([name, d]) => {
+          const paid      = Math.round(d.paid);
+          const required  = Math.round(d.required);
+          const remaining = required - paid;
+          const pct       = required > 0 ? Math.min(100, (paid / required) * 100) : 0;
+          const pctLabel  = pct.toFixed(0) + '%';
+          return `<div style="margin-top:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:18px;font-weight:900;color:#fff">
+                ${name}
+                <span style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.65);margin-left:6px">${pctLabel} settled</span>
+              </span>
+              <span style="font-size:13px;font-weight:700">
+                ${paid > 0 ? `<span style="color:#22c55e">₹${fmt(paid)} paid</span> · ` : ''}
+                <span style="color:#ef4444">₹${fmt(remaining)} left</span>
+              </span>
+            </div>
+            <div style="height:16px;background:rgba(255,255,255,0.12);border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,0.25)">
+              <div style="width:${pct.toFixed(1)}%;height:100%;border-radius:999px;background:linear-gradient(90deg,#ff4d6d,#ff9f43,#ffd166);position:relative;transition:width .6s ease;box-shadow:0 0 10px rgba(255,120,120,0.45)">
+                <div style="position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.35) 50%,rgba(255,255,255,0) 100%);animation:shine 2s infinite linear"></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:rgba(255,255,255,0.5);font-weight:600">
+              <span>0%</span><span>${pctLabel}</span><span>100%</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    })()}`;
 
-        // Step 2: Actual repayments made, keyed by from→to
-        // pairPaid[from][to] = total amount from has paid to to
-        const pairPaid = {};
-        groupData.repayments.forEach(r => {
-          if (!pairPaid[r.from]) pairPaid[r.from] = {};
-          pairPaid[r.from][r.to] = (pairPaid[r.from][r.to] || 0) + (+r.amount || 0);
-        });
+  const nonZeroBal   = Object.entries(bal).filter(([,b]) => Math.abs(b) >= 1);
+  const netBalTitle  = document.getElementById('net-bal-title');
+  const balGrid      = document.getElementById('balance-grid');
+  if (!nonZeroBal.length) {
+    if (netBalTitle) netBalTitle.style.display = 'none';
+    if (balGrid)     balGrid.style.display     = 'none';
+  } else {
+    if (netBalTitle) netBalTitle.style.display = '';
+    if (balGrid)     balGrid.style.display     = '';
+    balGrid.innerHTML = nonZeroBal.map(([n,b]) => {
+      const cls = b > 0 ? 'pos' : 'neg';
+      const lbl = b > 0 ? 'gets back' : 'owes';
+      const c   = COLORS[Math.abs(hash(n)) % COLORS.length];
+      return `<div class="bal-card" onclick="switchTabFiltered('expenses','','','','${n}')" style="cursor:pointer">
+        <div class="bc-name" style="color:${c}">${n}</div>
+        <div class="bc-amt ${cls}">₹${fmt(Math.abs(b))}</div>
+        <div class="bc-lbl ${cls}">${lbl} ↗</div>
+      </div>`;
+    }).join('');
+  }
 
-        // Step 3: For each settlement pair, original debt = remaining + already paid
-        // Group by debtor (from), summing across all their creditors
-        const debtorMap = {}; // { from: { required, paid } }
-        settles.forEach(t => {
-          const alreadyPaid = (pairPaid[t.from] && pairPaid[t.from][t.to]) ? pairPaid[t.from][t.to] : 0;
-          const original = t.amount + alreadyPaid; // what they originally owed this creditor
-          if (!debtorMap[t.from]) debtorMap[t.from] = { required: 0, paid: 0 };
-          debtorMap[t.from].required += original;
-          debtorMap[t.from].paid     += alreadyPaid;
-        });
-
-        // Also include debtors who have fully settled (remaining = 0, but paid > 0)
-        Object.keys(pairPaid).forEach(from => {
-          Object.entries(pairPaid[from]).forEach(([to, paid]) => {
-            // Only add if this pair doesn't already appear in settles
-            const alreadyInSettle = settles.some(s => s.from === from && s.to === to);
-            if (!alreadyInSettle) {
-              if (!debtorMap[from]) debtorMap[from] = { required: 0, paid: 0 };
-              debtorMap[from].required += paid;
-              debtorMap[from].paid     += paid;
-            }
-          });
-        });
-
-        const debtors = Object.entries(debtorMap).filter(([,d]) => d.required > 0.01);
-        if (!debtors.length) return `<div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:8px">✅ No outstanding debts!</div>`;
-
-        return debtors.map(([name, d]) => {
-  const pct = Math.min(100, (d.paid / d.required) * 100);
-  const c = COLORS[Math.abs(hash(name)) % COLORS.length];
-  const remaining = Math.max(0, d.required - d.paid);
-  const pctLabel = pct.toFixed(0) + '%';
-
-  return `<div style="margin-top:10px">
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-
-      <span style="font-size:20px;font-weight:900;color:#fff;letter-spacing:0.4px;line-height:1.1">
-        ${name}
-        <span style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.65);margin-left:6px">
-          ${pctLabel} settled
-        </span>
-      </span>
-
-      <span style="font-size:14px;font-weight:700">
-
-        <span style="color:#22c55e">
-          ₹${fmt(d.paid)} paid
-        </span>
-
-        ·
-
-        ${
-          remaining > 0.01
-          ? `<span style="color:#ef4444">₹${fmt(remaining)} left</span>`
-          : `<span style="color:#22c55e">✅ done</span>`
-        }
-
-      </span>
-
-    </div>
-
-    <div style="
-  margin-top:10px;
-  position:relative;
-">
-
-  <!-- Progress Track -->
-  <div style="
-    height:16px;
-    background:rgba(255,255,255,0.12);
-    border-radius:999px;
-    overflow:hidden;
-    position:relative;
-    box-shadow:
-      inset 0 2px 6px rgba(0,0,0,0.25),
-      0 1px 1px rgba(255,255,255,0.06);
-  ">
-
-    <!-- Animated Fill -->
-    <div style="
-      width:${pct.toFixed(1)}%;
-      height:100%;
-      border-radius:999px;
-      background:linear-gradient(90deg,#ff4d6d,#ff9f43,#ffd166);
-      position:relative;
-      transition:width .6s ease;
-      box-shadow:
-        0 0 10px rgba(255,120,120,0.45),
-        inset 0 1px 1px rgba(255,255,255,0.35);
-    ">
-
-      <!-- Shine Effect -->
-      <div style="
-        position:absolute;
-        top:0;
-        left:0;
-        width:40%;
-        height:100%;
-        background:linear-gradient(
-          90deg,
-          rgba(255,255,255,0) 0%,
-          rgba(255,255,255,0.35) 50%,
-          rgba(255,255,255,0) 100%
-        );
-        animation:shine 2s infinite linear;
-      "></div>
-
-    </div>
-
-  </div>
-
-  <!-- Percentage Label -->
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    margin-top:6px;
-    font-size:11px;
-    color:rgba(255,255,255,0.55);
-    font-weight:600;
-  ">
-    <span>0%</span>
-    <span>${pctLabel}</span>
-    <span>100%</span>
-  </div>
-
-</div>
-
-  </div>`;
-}).join('');
-      })()}
-    </div>`;
-
-  // ── Net balance cards ────────────────────────────────────────
-  let bgHtml = Object.entries(bal).map(([n,b], idx) => {
-    const cls   = b>0.01?'pos':b<-0.01?'neg':'zero';
-    const lbl   = b>0.01?'↑ gets back':b<-0.01?'↓ owes':'✓ settled';
-    const c     = COLORS[Math.abs(hash(n))%COLORS.length];
-    const barBg = b>0.01?'#e8f5e9':b<-0.01?'#ffebee':'var(--surface2)';
-    const barFg = b>0.01?'#2ecc71':b<-0.01?'#e53935':'var(--border)';
-    const delay = (idx * 0.1).toFixed(1);
-    return `<div class="bal-card" onclick="switchTabFiltered('expenses','','${n}')" style="animation-delay:${delay}s">
-      <div class="bc-name">
-        <div class="bc-av" style="background:${c}">${n[0].toUpperCase()}</div>
-        ${n}
-      </div>
-      <div class="bc-amt ${cls}">₹${fmt(Math.abs(b))}</div>
-      <div class="bc-lbl ${cls}">${lbl}</div>
-      <div class="bc-bar" style="background:${barBg}">
-        <div class="bc-bar-fill" style="width:100%;background:${barFg}"></div>
-      </div>
-    </div>`;
-  }).join('');
-  document.getElementById('balance-grid').innerHTML = bgHtml || '<div class="empty" style="padding:16px">No data yet</div>';
-
-  // ── Payments by member ───────────────────────────────────────
   const paidByPerson = {};
-  const expCountByPerson = {};
-  const lastExpByPerson = {};
-  members.forEach(m => { paidByPerson[m]=0; expCountByPerson[m]=0; });
+  members.forEach(m => paidByPerson[m] = 0);
   groupData.expenses.forEach(e => {
     const p = e.paidBy;
     if (!(p in paidByPerson)) paidByPerson[p] = 0;
-    if (!(p in expCountByPerson)) expCountByPerson[p] = 0;
-    paidByPerson[p]   += +e.amount||0;
-    expCountByPerson[p]++;
-    const d = new Date(e.date||0);
-    if (!lastExpByPerson[p] || d > lastExpByPerson[p]) lastExpByPerson[p] = d;
+    paidByPerson[p] += +e.amount||0;
   });
-  const maxPaid    = Math.max(...Object.values(paidByPerson), 1);
+  const maxPaid = Math.max(...Object.values(paidByPerson), 1);
   const sortedPaid = Object.entries(paidByPerson).sort((a,b)=>b[1]-a[1]);
-  const topPayerName = sortedPaid[0]?.[0];
-
-  document.getElementById('paid-list').innerHTML = sortedPaid.length ? sortedPaid.map(([n, amt], idx) => {
-    const c        = COLORS[Math.abs(hash(n))%COLORS.length];
-    const barPct   = (amt/maxPaid*100).toFixed(1);
-    const sharePct = totalSpent>0 ? ((amt/totalSpent)*100).toFixed(0) : 0;
-    const expCount = expCountByPerson[n]||0;
-    const avgAmt   = expCount>0 ? fmt(Math.round(amt/expCount)) : '—';
-    const netBal   = bal[n]||0;
-    const netCls   = netBal>0.01?'pos':netBal<-0.01?'neg':'zero';
-    const netStr   = netBal>0.01?`+₹${fmt(netBal)}`:netBal<-0.01?`−₹${fmt(Math.abs(netBal))}`:'₹0';
-    const isMe     = n===me.name;
-    const isTop    = n===topPayerName && amt>0;
-    const rankCls  = idx===0?'pr-rank-1':idx===1?'pr-rank-2':'pr-rank-3';
-    const lastD    = lastExpByPerson[n];
-    const daysAgo  = lastD ? Math.floor((Date.now()-lastD)/(1000*60*60*24)) : null;
-    const lastStr  = daysAgo===null?'—':daysAgo===0?'today':daysAgo===1?'1d ago':`${daysAgo}d ago`;
-    const delay    = (idx*0.1).toFixed(1);
-    return `<div class="paid-row" onclick="switchTabFiltered('expenses','','${n}')" style="animation-delay:${delay}s">
-      <div class="pr-rank ${rankCls}">${idx+1}</div>
+  document.getElementById('paid-list').innerHTML = sortedPaid.map(([n,amt]) => {
+    const c = COLORS[Math.abs(hash(n))%COLORS.length];
+    const pct = (amt/maxPaid*100).toFixed(1);
+    const share = totalSpent>0?((amt/totalSpent)*100).toFixed(0):0;
+    return `<div class="paid-row" onclick="switchTabFiltered('expenses','','${n}','','')" style="cursor:pointer">
       <div class="pr-av" style="background:${c}">${n[0].toUpperCase()}</div>
       <div class="pr-info">
-        <div class="pr-top">
-          <span class="pr-name-text">${n}</span>
-          ${isMe  ? `<span class="pr-badge pr-you">you</span>` : ''}
-          ${isTop ? `<span class="pr-badge pr-top-payer">top payer</span>` : ''}
-          <span class="pr-amt-inline">₹${fmt(amt)}</span>
-        </div>
-        <div class="pr-meta">
-          <span class="pr-pill">🧾 ${expCount} exp</span>
-          <span class="pr-pill">🕐 ${lastStr}</span>
-        </div>
-        <div class="paid-bar-track">
-          <div class="paid-bar-fill" style="width:${barPct}%;background:${c}">
-            <div class="bar-shimmer-inner"></div>
-          </div>
-        </div>
-        <div class="pr-stats">
-          <div class="pr-stat"><span class="pr-stat-val" style="color:${c}">${sharePct}%</span><span class="pr-stat-lbl">of total</span></div>
-          <div class="pr-stat"><span class="pr-stat-val">₹${avgAmt}</span><span class="pr-stat-lbl">avg / expense</span></div>
-          <div class="pr-stat"><span class="pr-stat-val ${netCls}">${netStr}</span><span class="pr-stat-lbl">net balance</span></div>
-        </div>
+        <div class="pr-name"><span>${n}</span><span>₹${fmt(amt)} ↗</span></div>
+        <div class="paid-bar"><div class="paid-fill" style="width:${pct}%;background:${c}"></div></div>
+        <div class="pr-share">${share}% of total · ${groupData.expenses.filter(e=>e.paidBy===n).length} expenses</div>
       </div>
-      <span class="pr-arrow">→</span>
     </div>`;
-  }).join('') : '<div class="empty" style="padding:16px">No expenses yet</div>';
+  }).join('') || '<div class="empty" style="padding:16px">No expenses yet</div>';
 
-  // ── Category breakdown ───────────────────────────────────────
-  const catMap   = {};
-  const catColors = {
-    '🏨 Accommodation': { bg:'#EEEDFE', bar:'#534AB7', text:'#3C3489' },
-    '🍽️ Food & Drinks':  { bg:'#EAF3DE', bar:'#639922', text:'#27500A' },
-    '🚗 Transport':      { bg:'#FAEEDA', bar:'#BA7517', text:'#633806' },
-    '🎟️ Activities':     { bg:'#FBEAF0', bar:'#D4537E', text:'#72243E' },
-    '🛒 Shopping':       { bg:'#E6F1FB', bar:'#378ADD', text:'#0C447C' },
-    '💊 Medical':        { bg:'#FCEBEB', bar:'#E24B4A', text:'#791F1F' },
-    '📦 Miscellaneous':  { bg:'#F1EFE8', bar:'#888780', text:'#444441' },
-  };
+  const catMap = {};
   const catIcons = {'🏨 Accommodation':'🏨','🍽️ Food & Drinks':'🍽️','🚗 Transport':'🚗','🎟️ Activities':'🎟️','🛒 Shopping':'🛒','💊 Medical':'💊','📦 Miscellaneous':'📦'};
-
   groupData.expenses.forEach(e => {
     const cat = e.category||'📦 Miscellaneous';
-    if (!catMap[cat]) catMap[cat]={ amount:0, count:0, paidBy:{}, memberSet:new Set() };
+    if (!catMap[cat]) catMap[cat]={amount:0,count:0};
     catMap[cat].amount += +e.amount||0;
     catMap[cat].count++;
-    const pb = e.paidBy||'';
-    catMap[cat].paidBy[pb] = (catMap[cat].paidBy[pb]||0) + (+e.amount||0);
-    Object.keys(e.splits||{}).forEach(p => catMap[cat].memberSet.add(p));
   });
-
-  const maxCat    = Math.max(...Object.values(catMap).map(v=>v.amount), 1);
-  const maxCount  = Math.max(...Object.values(catMap).map(v=>v.count), 1);
+  const maxCat = Math.max(...Object.values(catMap).map(v=>v.amount), 1);
   const sortedCat = Object.entries(catMap).sort((a,b)=>b[1].amount-a[1].amount);
-
-  document.getElementById('cat-list').innerHTML = sortedCat.length ? sortedCat.map(([cat, data], idx) => {
-    const icon     = catIcons[cat]||'📦';
-    const cc       = catColors[cat]||{ bg:'#F1EFE8', bar:'#888780', text:'#444441' };
-    const barPct   = (data.amount/maxCat*100).toFixed(1);
-    const sharePct = totalSpent>0 ? ((data.amount/totalSpent)*100).toFixed(0) : 0;
-    const avgAmt   = data.count>0 ? fmt(Math.round(data.amount/data.count)) : '—';
-    const topPayer = Object.entries(data.paidBy).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
-    const myShare  = groupData.expenses
-      .filter(e=>(e.category||'📦 Miscellaneous')===cat)
-      .reduce((s,e)=>s+(+(e.splits||{})[me.name]||0), 0);
-    const memberCount = data.memberSet.size;
-    const isLargest  = idx===0;
-    const isMostItems= data.count===maxCount && maxCount>1;
-    const tag        = isLargest?`<span class="cat-tag" style="background:${cc.bg};color:${cc.text}">largest</span>`
-                      :isMostItems?`<span class="cat-tag" style="background:${cc.bg};color:${cc.text}">most items</span>`:'';
-    const delay = (idx*0.1).toFixed(1);
-    return `<div class="cat-row" onclick="switchTabFiltered('expenses','${cat}','')" style="animation-delay:${delay}s">
-      <div class="cat-icon-wrap" style="background:${cc.bg}">${icon}</div>
+  document.getElementById('cat-list').innerHTML = sortedCat.length ? sortedCat.map(([cat,data]) => {
+    const icon = catIcons[cat] || '📦';
+    const pct = (data.amount/maxCat*100).toFixed(1);
+    const share = totalSpent>0?((data.amount/totalSpent)*100).toFixed(0):0;
+    return `<div class="cat-row" onclick="switchTabFiltered('expenses','${cat}','','','')" style="cursor:pointer">
+      <div class="cat-icon">${icon}</div>
       <div class="cat-info">
         <div class="cat-name-row">
           <span class="cn">${cat.replace(/^\S+\s/,'')}</span>
-          <span class="ca">₹${fmt(data.amount)}<span class="cat-pct-badge" style="background:${cc.bg};color:${cc.text}">${sharePct}%</span></span>
+          <span class="ca">₹${fmt(data.amount)} <span style="font-size:10px;color:var(--muted2);font-family:'DM Sans'">(${share}%) ↗</span></span>
         </div>
-        <div class="cat-sub">
-          <span class="pr-pill">🧾 ${data.count} item${data.count>1?'s':''}</span>
-          <span class="pr-pill">⌀ ₹${avgAmt}</span>
-          ${tag}
-        </div>
-        <div class="cat-bar-track">
-          <div class="cat-bar-fill" style="width:${barPct}%;background:${cc.bar}">
-            <div class="bar-shimmer-inner"></div>
-          </div>
-        </div>
-        <div class="cat-stats">
-          <div class="cat-stat"><span class="cat-stat-val">${topPayer}</span><span class="cat-stat-lbl">top payer</span></div>
-          <div class="cat-stat"><span class="cat-stat-val" style="color:${cc.bar}">₹${fmt(Math.round(myShare))}</span><span class="cat-stat-lbl">your share</span></div>
-          <div class="cat-stat"><span class="cat-stat-val">${memberCount}</span><span class="cat-stat-lbl">members split</span></div>
-        </div>
+        <div class="cat-bar"><div class="cat-fill" style="width:${pct}%"></div></div>
       </div>
-      <span class="pr-arrow">→</span>
+      <div style="font-size:11px;color:var(--muted2);white-space:nowrap;padding-left:8px">${data.count} item${data.count>1?'s':''}</div>
     </div>`;
   }).join('') : '<div class="empty" style="padding:16px">No expenses yet</div>';
 
-  // Settlements
   const settles = calcSettlements(bal);
-  let sHtml = settles.length === 0
+  document.getElementById('settlements-list').innerHTML = settles.length === 0
     ? '<div class="empty"><div class="ei">✅</div>All settled up!</div>'
     : settles.map(s => {
-        const isMe = s.from===me.name||s.to===me.name;
-        const fromC = COLORS[Math.abs(hash(s.from))%COLORS.length];
-        const toC   = COLORS[Math.abs(hash(s.to))%COLORS.length];
+        const isMe  = s.from === me.name || s.to === me.name;
+        const fromC = COLORS[Math.abs(hash(s.from)) % COLORS.length];
+        const toC   = COLORS[Math.abs(hash(s.to))   % COLORS.length];
         return `<div class="settle-card" onclick="switchTab('repay')" style="cursor:pointer">
           <div class="settle-top">
             <div class="settle-flow">
@@ -1660,25 +1284,64 @@ function renderDashboard() {
             </div>
             <div class="settle-actions">
               <span class="settle-amt">₹${fmt(s.amount)}</span>
-              ${isMe?`<button class="btn btn-sm" onclick="openSettle('${s.from}','${s.to}',${s.amount})">Pay</button>`:''}
+              ${isMe ? `<button class="btn btn-sm" onclick="event.stopPropagation();openSettle('${s.from}','${s.to}',${s.amount})">Pay</button>` : ''}
             </div>
           </div>
         </div>`;
       }).join('');
-  document.getElementById('settlements-list').innerHTML = sHtml;
   renderPendingOnDashboard();
 }
 
 function fmt(n) { return (+n||0).toLocaleString('en-IN',{maximumFractionDigits:0}); }
 
+// ─── RENDER HISTORY (with 5 filters) ─────────────────────
 function renderHistory() {
-  const items = [
+  const catFilter    = document.getElementById('hist-filter-cat')?.value    || '';
+  const paidByFilter = document.getElementById('hist-filter-paidby')?.value || '';
+  const inSplitFilter= document.getElementById('hist-filter-insplit')?.value|| '';
+  const repFromFilter= document.getElementById('hist-filter-repfrom')?.value|| '';
+  const repToFilter  = document.getElementById('hist-filter-repto')?.value  || '';
+
+  const hasExpFilter = catFilter || paidByFilter || inSplitFilter;
+  const hasRepFilter = repFromFilter || repToFilter;
+
+  const allItems = [
     ...groupData.expenses.map(e=>({...e,_t:'expense'})),
     ...groupData.repayments.map(r=>({...r,_t:'repayment'}))
   ].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
 
-  if (!items.length) { document.getElementById('history-list').innerHTML='<div class="empty"><div class="ei">📭</div>No transactions yet</div>'; return; }
-  document.getElementById('history-list').innerHTML = items.map(item => {
+  const filtered = allItems.filter(item => {
+    if (item._t === 'expense') {
+      // If repayment-only filters are active, hide expenses only when no expense filters are active AND repayment filters don't apply
+      if (hasRepFilter && !hasExpFilter) return false; // only repayment filters → hide expenses
+      if (catFilter && item.category !== catFilter) return false;
+      if (paidByFilter && item.paidBy !== paidByFilter) return false;
+      if (inSplitFilter && !(item.splits && inSplitFilter in item.splits)) return false;
+      return true;
+    } else {
+      // repayment
+      if (hasExpFilter && !hasRepFilter) return false; // only expense filters → hide repayments
+      if (repFromFilter && item.from !== repFromFilter) return false;
+      if (repToFilter   && item.to   !== repToFilter)   return false;
+      return true;
+    }
+  });
+
+  // Update count display
+  const countEl = document.getElementById('hist-filter-count');
+  const hasAnyFilter = catFilter || paidByFilter || inSplitFilter || repFromFilter || repToFilter;
+  if (countEl) {
+    countEl.innerHTML = hasAnyFilter
+      ? `Showing <strong>${filtered.length}</strong> of ${allItems.length} transactions`
+      : '';
+  }
+
+  if (!filtered.length) {
+    document.getElementById('history-list').innerHTML='<div class="empty"><div class="ei">📭</div>' + (hasAnyFilter ? 'No transactions match these filters' : 'No transactions yet') + '</div>';
+    return;
+  }
+
+  document.getElementById('history-list').innerHTML = filtered.map(item => {
     if (item._t==='expense') {
       const splits = item.splits||{};
       const myShare = splits[me.name] !== undefined ? `<span style="color:var(--accent)"> · Your share: ₹${(+splits[me.name]).toFixed(0)}</span>` : '';
@@ -1713,13 +1376,19 @@ function renderHistory() {
   }).join('');
 }
 
+function clearHistoryFilters() {
+  ['hist-filter-cat','hist-filter-paidby','hist-filter-insplit','hist-filter-repfrom','hist-filter-repto']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  renderHistory();
+}
+
+// ─── RENDER REPAY ─────────────────────────────────────────
 function renderRepay() {
   const settles = calcSettlements(calcBalances());
   document.getElementById('debts-list').innerHTML = !settles.length
     ? '<div class="empty" style="padding:16px 0"><div class="ei">✅</div>No debts!</div>'
     : settles.map(s=>`<div class="debt-row"><div class="dr-info"><strong>${s.from}</strong> owes <strong>${s.to}</strong></div><div class="dr-amt">₹${s.amount.toFixed(0)}</div></div>`).join('');
 
-  // Render pending confirmations where I am the receiver
   if (!currentGroup) return;
   const pending = getPendingRepayments(currentGroup.id);
   const forMe = pending.filter(p => p.to === me.name && p.status === 'pending');
@@ -1773,7 +1442,6 @@ function renderRepay() {
     </div>`;
   }).join('');
 
-  // Generate QR codes after DOM is set
   forMe.forEach(p => {
     if (p.method === 'upi' && p.upiId) {
       const el = document.getElementById('pqr-' + p.id);
@@ -1788,8 +1456,6 @@ function renderRepay() {
 function renderPendingOnDashboard() {
   if (!currentGroup) return;
   const pending = getPendingRepayments(currentGroup.id);
-
-  // Show on dashboard: all pending items involving me (as sender OR receiver)
   const relevant = pending.filter(p =>
     p.status === 'pending' && (p.from === me.name || p.to === me.name || me.isAdmin)
   );
@@ -1801,7 +1467,6 @@ function renderPendingOnDashboard() {
     if (section) section.style.display = 'none';
     return;
   }
-
   if (section) section.style.display = 'block';
   if (countEl) countEl.textContent = relevant.length;
   if (list) list.innerHTML = relevant.map(p => {
@@ -1847,8 +1512,11 @@ function renderAdminMembers() {
     </div>`).join('');
 }
 
+// ─── POPULATE DROPDOWNS (including all filter dropdowns) ──
 function populateDropdowns() {
   const names = groupData.members || [];
+
+  // Form selects
   ['exp-paidby','rep-from','rep-to'].forEach(id => {
     const sel = document.getElementById(id);
     const prev = sel.value;
@@ -1856,6 +1524,25 @@ function populateDropdowns() {
     if (id==='exp-paidby'&&names.includes(me.name)) sel.value = me.name;
     if (id==='rep-from'&&names.includes(me.name)) sel.value = me.name;
   });
+
+  // Expense filter dropdowns
+  ['exp-filter-paidby','exp-filter-person'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = `<option value="">${id==='exp-filter-paidby'?'All Payers':'All Members'}</option>`
+      + names.map(n=>`<option ${n===prev?'selected':''}>${n}</option>`).join('');
+  });
+
+  // History filter dropdowns
+  ['hist-filter-paidby','hist-filter-insplit','hist-filter-repfrom','hist-filter-repto'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = `<option value="">All</option>`
+      + names.map(n=>`<option ${n===prev?'selected':''}>${n}</option>`).join('');
+  });
+
   renderSplitRows();
 }
 
@@ -1960,11 +1647,7 @@ async function submitRepayment() {
   const note   = document.getElementById('rep-note').value.trim();
   if (from === to) { toast('Payer and receiver must differ','err'); return; }
   if (!amount || amount <= 0) { toast('Enter valid amount','err'); return; }
-
-  const iAmSender   = (me.name === from);
   const iAmReceiver = (me.name === to);
-
-  // If recorder is the receiver OR admin → direct commit (no confirmation needed)
   if (iAmReceiver || me.isAdmin) {
     try {
       await gas('addRepayment',{groupId:currentGroup.id,from,to,amount,note:note||payMethod,addedBy:me.name});
@@ -1974,8 +1657,6 @@ async function submitRepayment() {
     } catch(e) { toast('Error: '+e.message,'err'); }
     return;
   }
-
-  // Recorder is the sender → create a pending entry in GAS awaiting receiver confirmation
   try {
     await gas('addPendingRepayment', {
       groupId: currentGroup.id,
@@ -1986,7 +1667,6 @@ async function submitRepayment() {
     });
     toast(`Payment sent for ${to}'s confirmation ⏳`, 'ok');
     clearRepayForm();
-    // Reload so _pendingCache is fresh
     await loadGroupData();
   } catch(e) { toast('Error: '+e.message, 'err'); }
 }
@@ -1997,7 +1677,6 @@ function clearRepayForm() {
   document.getElementById('upi-qr-section').style.display = 'none';
 }
 
-// Accept a pending repayment (receiver confirms)
 async function acceptPending(id) {
   const entry = _pendingCache.find(p => p.id === id);
   if (!entry) return;
@@ -2009,7 +1688,6 @@ async function acceptPending(id) {
   } catch(e) { toast('Error: '+e.message,'err'); }
 }
 
-// Reject a pending repayment
 async function rejectPending(id) {
   const entry = _pendingCache.find(p => p.id === id);
   if (!entry) return;
@@ -2021,14 +1699,12 @@ async function rejectPending(id) {
   } catch(e) { toast('Error: '+e.message,'err'); }
 }
 
-// UPI helpers
 function saveUpiId() {
   const v1 = document.getElementById('my-upi-id')?.value.trim();
   const v2 = document.getElementById('admin-upi-id')?.value.trim();
   const val = v1 || v2 || '';
   if (val) {
     setUpiId(me.name, val);
-    // Sync both fields
     if (document.getElementById('my-upi-id'))    document.getElementById('my-upi-id').value    = val;
     if (document.getElementById('admin-upi-id')) document.getElementById('admin-upi-id').value = val;
   }
@@ -2051,7 +1727,6 @@ function updateRepayConfirmNote() {
   const noteEl = document.getElementById('repay-confirm-note');
   const btnLbl = document.getElementById('repay-btn-label');
   if (!from || !to || !noteEl) return;
-  const iAmSender   = (me.name === from);
   const iAmReceiver = (me.name === to);
   if (iAmReceiver || me.isAdmin) {
     noteEl.style.display = 'none';
@@ -2088,7 +1763,6 @@ function updateRepayQR() {
         <button class="copy-btn" onclick="navigator.clipboard.writeText('${receiverUpi}').then(()=>toast('UPI ID copied!','ok'))">📋 Copy UPI ID</button>
       </div>
     </div>`;
-  // Generate QR
   if (_repayQRInstance) { try { _repayQRInstance.clear(); } catch(e) {} }
   try {
     _repayQRInstance = new QRCode(document.getElementById('repay-qr-canvas'), {
@@ -2154,28 +1828,23 @@ let editSplitType = 'equal';
 function openEditExpense(expId) {
   const exp = groupData.expenses.find(e => e.id === expId);
   if (!exp) { toast('Expense not found','err'); return; }
-
   document.getElementById('edit-exp-id').value = expId;
   document.getElementById('edit-desc').value = exp.description || '';
   document.getElementById('edit-amount').value = exp.amount || '';
   document.getElementById('edit-notes').value = exp.notes || '';
-
   const members = groupData.members || [];
   const paidSel = document.getElementById('edit-paidby');
   paidSel.innerHTML = members.map(n=>`<option ${n===exp.paidBy?'selected':''}>${n}</option>`).join('');
-
   const catSel = document.getElementById('edit-cat');
   for (let i=0;i<catSel.options.length;i++) {
     if (catSel.options[i].value === exp.category) { catSel.selectedIndex = i; break; }
   }
-
   const splits = exp.splits || {};
   const included = Object.keys(splits);
   const amounts = Object.values(splits).map(v=>+v);
   const total = amounts.reduce((s,a)=>s+a,0);
   const isEqual = amounts.every(a=>Math.abs(a-amounts[0])<0.02);
   const allIncluded = members.every(m=>included.includes(m));
-
   if (allIncluded && isEqual) {
     setEditSplit('equal');
   } else if (!allIncluded) {
@@ -2185,7 +1854,6 @@ function openEditExpense(expId) {
   } else {
     setEditSplit('percent');
   }
-
   if (editSplitType === 'percent') {
     members.forEach(n => {
       const el = document.getElementById('epct-'+n);
@@ -2206,7 +1874,6 @@ function openEditExpense(expId) {
       if (el) el.checked = included.includes(n);
     });
   }
-
   document.getElementById('edit-modal').style.display = 'flex';
 }
 
@@ -2270,13 +1937,10 @@ async function submitEditExpense() {
   const paidBy  = document.getElementById('edit-paidby').value;
   const category= document.getElementById('edit-cat').value;
   const notes   = document.getElementById('edit-notes').value.trim();
-
   if (!desc)            { toast('Enter description','err'); return; }
   if (!amount||amount<=0){ toast('Enter valid amount','err'); return; }
-
   const names = groupData.members || [];
   let splits = {};
-
   if (editSplitType==='equal') {
     const share = amount/names.length;
     names.forEach(n=>splits[n]=+share.toFixed(2));
@@ -2295,7 +1959,6 @@ async function submitEditExpense() {
     const share=amount/included.length;
     included.forEach(n=>splits[n]=+share.toFixed(2));
   }
-
   closeModal();
   try {
     await gas('editExpense',{expenseId:expId,groupId:currentGroup.id,desc,amount,paidBy,category,notes,splits,editedBy:me.name});
@@ -2312,14 +1975,12 @@ function confirmDeleteExpense(id, desc) {
   document.getElementById('delete-confirm-btn').onclick = () => doDeleteExpense(id);
   document.getElementById('delete-modal').style.display = 'flex';
 }
-
 function confirmDeleteRepayment(id, from, to, amount) {
   document.getElementById('delete-modal-desc').textContent = `Delete repayment: ${from} → ${to} ₹${fmt(amount)}?`;
   document.getElementById('delete-modal-warn').textContent = 'This will reverse the repayment and update balances accordingly. This cannot be undone.';
   document.getElementById('delete-confirm-btn').onclick = () => doDeleteRepayment(id);
   document.getElementById('delete-modal').style.display = 'flex';
 }
-
 function confirmDeleteTrip() {
   const name = currentGroup.name || 'this trip';
   document.getElementById('delete-modal-desc').textContent = `Permanently delete "${name}"?`;
@@ -2327,7 +1988,6 @@ function confirmDeleteTrip() {
   document.getElementById('delete-confirm-btn').onclick = () => doDeleteTrip();
   document.getElementById('delete-modal').style.display = 'flex';
 }
-
 async function doDeleteExpense(id) {
   closeModal();
   try {
@@ -2336,7 +1996,6 @@ async function doDeleteExpense(id) {
     await loadGroupData();
   } catch(e) { toast('Error: '+e.message,'err'); }
 }
-
 async function doDeleteRepayment(id) {
   closeModal();
   try {
@@ -2345,7 +2004,6 @@ async function doDeleteRepayment(id) {
     await loadGroupData();
   } catch(e) { toast('Error: '+e.message,'err'); }
 }
-
 async function doDeleteTrip() {
   closeModal();
   try {
@@ -2378,33 +2036,18 @@ async function confirmSettle() {
   } catch(e) { toast('Error: '+e.message,'err'); }
 }
 
-// ─── EXPENSES TAB ─────────────────────────────────────────
+// ─── EXPENSES TAB (3 filters: category, paidby, insplit) ──
 function renderExpensesTab() {
-  const members = groupData.members || [];
+  const members  = groupData.members || [];
   const expenses = groupData.expenses || [];
+
   const catFilter    = document.getElementById('exp-filter-cat')?.value    || '';
   const paidByFilter = document.getElementById('exp-filter-paidby')?.value || '';
   const personFilter = document.getElementById('exp-filter-person')?.value || '';
 
-   const psel = document.getElementById('exp-filter-person');
-  if (psel) {
-    const prevPerson = psel.value;
-    psel.innerHTML = '<option value="">Split: All</option>';
-    members.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; psel.appendChild(o); });
-    if (prevPerson) psel.value = prevPerson;
-  }
-
-  const pbsel = document.getElementById('exp-filter-paidby');
-  if (pbsel) {
-    const prevPaidBy = pbsel.value;
-    pbsel.innerHTML = '<option value="">Paid by: All</option>';
-    members.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; pbsel.appendChild(o); });
-    if (prevPaidBy) pbsel.value = prevPaidBy;
-  }
-
+  // Per-person expenditure summary (always over all expenses, unfiltered)
   const personExp = {};
   members.forEach(m => personExp[m] = { total: 0, cats: {} });
-
   expenses.forEach(exp => {
     const splits = exp.splits || {};
     Object.entries(splits).forEach(([person, share]) => {
@@ -2416,10 +2059,8 @@ function renderExpensesTab() {
       personExp[person].cats[cat] += amt;
     });
   });
-
   const totalSpent = expenses.reduce((s,e)=>s+(+e.amount||0),0);
   const sortedPersons = Object.entries(personExp).sort((a,b)=>b[1].total-a[1].total);
-
   document.getElementById('person-exp-summary').innerHTML = `<div class="person-exp-grid">${
     sortedPersons.map(([name, data]) => {
       const c = COLORS[Math.abs(hash(name))%COLORS.length];
@@ -2437,13 +2078,23 @@ function renderExpensesTab() {
     }).join('')
   }</div>`;
 
-   let filtered = [...expenses].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  // Apply all 3 filters with AND logic
+  let filtered = [...expenses].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
   if (catFilter)    filtered = filtered.filter(e => e.category === catFilter);
   if (paidByFilter) filtered = filtered.filter(e => e.paidBy === paidByFilter);
   if (personFilter) filtered = filtered.filter(e => e.splits && personFilter in e.splits);
 
+  // Update count display
+  const countEl = document.getElementById('exp-filter-count');
+  const hasFilter = catFilter || paidByFilter || personFilter;
+  if (countEl) {
+    countEl.innerHTML = hasFilter
+      ? `Showing <strong>${filtered.length}</strong> of ${expenses.length} expenses`
+      : '';
+  }
+
   if (!filtered.length) {
-    document.getElementById('expenses-list').innerHTML = '<div class="empty"><div class="ei">📭</div>No expenses match</div>';
+    document.getElementById('expenses-list').innerHTML = '<div class="empty"><div class="ei">📭</div>' + (hasFilter ? 'No expenses match these filters' : 'No expenses yet') + '</div>';
     return;
   }
 
@@ -2473,6 +2124,7 @@ function renderExpensesTab() {
     const notIncluded = members.filter(m=>!included.includes(m));
     const excRow = notIncluded.length ? `<tr><td colspan="3" style="font-size:11px;color:var(--muted);padding:5px 8px">Not included: ${notIncluded.join(', ')}</td></tr>` : '';
 
+    // Show the filtered person's share if filtering by insplit
     const myShare = personFilter && splits[personFilter] !== undefined
       ? +splits[personFilter] : null;
 
@@ -2505,6 +2157,12 @@ function renderExpensesTab() {
   }).join('');
 }
 
+function clearExpenseFilters() {
+  ['exp-filter-cat','exp-filter-paidby','exp-filter-person']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  renderExpensesTab();
+}
+
 // ─── UI HELPERS ───────────────────────────────────────────
 function switchTab(name) {
   const tabs=['dashboard','expenses','add','repay','history','admin'];
@@ -2513,27 +2171,32 @@ function switchTab(name) {
   const idx=tabs.indexOf(name);
   document.querySelectorAll('.tab')[idx]?.classList.add('active');
   document.getElementById('tab-'+name)?.classList.add('active');
-  // Lazy render each tab only when visited
   if (name==='add'||name==='repay') { populateDropdowns(); renderSplitRows(); }
   if (name==='repay') renderRepay();
   if (name==='expenses') renderExpensesTab();
   if (name==='history') renderHistory();
 }
 
-function switchTabFiltered(tabName, cat, person) {
+// switchTabFiltered now takes: tabName, cat, paidBy, inSplit, repFrom/To
+// For Expenses: switchTabFiltered('expenses', cat, paidBy, inSplit, '')
+// For History:  switchTabFiltered('history', ...)
+function switchTabFiltered(tabName, cat, paidBy, inSplit, repPerson) {
   switchTab(tabName);
   setTimeout(() => {
-    if (cat) {
-      const catSel = document.getElementById('exp-filter-cat');
-      if (catSel) catSel.value = cat;
+    if (tabName === 'expenses') {
+      const catSel    = document.getElementById('exp-filter-cat');
+      const paidSel   = document.getElementById('exp-filter-paidby');
+      const splitSel  = document.getElementById('exp-filter-person');
+      if (catSel   && cat)     catSel.value   = cat;
+      if (paidSel  && paidBy)  paidSel.value  = paidBy;
+      if (splitSel && inSplit) splitSel.value = inSplit;
+      renderExpensesTab();
+    } else if (tabName === 'history') {
+      // repPerson used as generic "person" — set insplit
+      const inSplitSel = document.getElementById('hist-filter-insplit');
+      if (inSplitSel && repPerson) inSplitSel.value = repPerson;
+      renderHistory();
     }
-    if (person) {
-      const pSel = document.getElementById('exp-filter-person');
-      if (pSel) pSel.value = person;
-      const pbSel = document.getElementById('exp-filter-paidby');
-      if (pbSel) pbSel.value = '';
-    }
-    renderExpensesTab();
   }, 50);
 }
 
@@ -2557,44 +2220,8 @@ function formatDate(s) {
 }
 function hash(s){ let h=0; for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i); return h; }
 
-// ─── EXCEL EXPORT ─────────────────────────────────────────
-const catFilter    = document.getElementById('exp-filter-cat')?.value    || '';
-  const paidByFilter = document.getElementById('exp-filter-paidby')?.value || '';
-  const personFilter = document.getElementById('exp-filter-person')?.value || '';
-  const members      = groupData.members || [];
-  let expenses = [...(groupData.expenses || [])].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-  if (catFilter)    expenses = expenses.filter(e => e.category === catFilter);
-  if (paidByFilter) expenses = expenses.filter(e => e.paidBy === paidByFilter);
-  if (personFilter) expenses = expenses.filter(e => e.splits && personFilter in e.splits);
-
-  // Build rows: one row per expense, columns for each member's share
-  const header = ['Date','Description','Category','Total Amount (₹)','Paid By',
-    ...members.map(m => m+' Share (₹)'), 'Notes'];
-
-  const rows = expenses.map(exp => {
-    const splits = exp.splits || {};
-    return [
-      exp.date ? new Date(exp.date).toLocaleString('en-IN') : '',
-      exp.description || '',
-      exp.category || '',
-      +exp.amount || 0,
-      exp.paidBy || '',
-      ...members.map(m => +(splits[m]||0)),
-      exp.notes || ''
-    ];
-  });
-
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
-  // Bold header row
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for (let C = range.s.c; C <= range.e.c; C++) {
-    const addr = XLSX.utils.encode_cell({r:0, c:C});
-    if (!ws[addr]) continue;
-    ws[addr].s = { font: { bold: true } };
-  }
-  // Column widths
-  function downloadExpensesExcel() {
+// ─── EXCEL EXPORT — EXPENSES (respects all 3 filters) ─────
+function downloadExpensesExcel() {
   const catFilter    = document.getElementById('exp-filter-cat')?.value    || '';
   const paidByFilter = document.getElementById('exp-filter-paidby')?.value || '';
   const personFilter = document.getElementById('exp-filter-person')?.value || '';
@@ -2630,47 +2257,53 @@ const catFilter    = document.getElementById('exp-filter-cat')?.value    || '';
   ];
   XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
 
-  const filterTag = [
-    catFilter    ? catFilter.replace(/^\S+\s/,'') : '',
-    paidByFilter ? 'paidby_'+paidByFilter : '',
-    personFilter ? personFilter : ''
+  const filters = [
+    catFilter ? catFilter.replace(/^\S+\s/,'') : '',
+    paidByFilter ? 'paid_'+paidByFilter : '',
+    personFilter ? 'split_'+personFilter : ''
   ].filter(Boolean).join('_') || 'All';
   const tripName = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
-  XLSX.writeFile(wb, `${tripName}_Expenses_${filterTag}.xlsx`);
+  XLSX.writeFile(wb, `${tripName}_Expenses_${filters}.xlsx`);
   toast('Expenses downloaded!','ok');
 }
 
-
-function downloadRepaymentExcel() {
-  const repayments = [...(groupData.repayments || [])].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-  const header = ['Date','From','To','Amount (₹)','Note','Added By'];
-  const rows = repayments.map(r => [
-    r.date ? new Date(r.date).toLocaleString('en-IN') : '',
-    r.from || '', r.to || '',
-    +r.amount || 0,
-    r.note || '', r.addedBy || ''
-  ]);
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
-  ws['!cols'] = [{wch:18},{wch:14},{wch:14},{wch:14},{wch:24},{wch:14}];
-  XLSX.utils.book_append_sheet(wb, ws, 'Repayments');
-  const tripName = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
-  XLSX.writeFile(wb, `${tripName}_Repayments.xlsx`);
-  toast('Repayments downloaded!','ok');
-}
-
+// ─── EXCEL EXPORT — HISTORY (respects all 5 filters) ──────
 function downloadHistoryExcel() {
-  const items = [
+  const catFilter    = document.getElementById('hist-filter-cat')?.value    || '';
+  const paidByFilter = document.getElementById('hist-filter-paidby')?.value || '';
+  const inSplitFilter= document.getElementById('hist-filter-insplit')?.value|| '';
+  const repFromFilter= document.getElementById('hist-filter-repfrom')?.value|| '';
+  const repToFilter  = document.getElementById('hist-filter-repto')?.value  || '';
+
+  const hasExpFilter = catFilter || paidByFilter || inSplitFilter;
+  const hasRepFilter = repFromFilter || repToFilter;
+
+  const allItems = [
     ...(groupData.expenses||[]).map(e=>({...e,_t:'expense'})),
     ...(groupData.repayments||[]).map(r=>({...r,_t:'repayment'}))
   ].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+
+  const filtered = allItems.filter(item => {
+    if (item._t === 'expense') {
+      if (hasRepFilter && !hasExpFilter) return false;
+      if (catFilter     && item.category !== catFilter) return false;
+      if (paidByFilter  && item.paidBy   !== paidByFilter) return false;
+      if (inSplitFilter && !(item.splits && inSplitFilter in item.splits)) return false;
+      return true;
+    } else {
+      if (hasExpFilter && !hasRepFilter) return false;
+      if (repFromFilter && item.from !== repFromFilter) return false;
+      if (repToFilter   && item.to   !== repToFilter)   return false;
+      return true;
+    }
+  });
 
   const members = groupData.members || [];
   const header = ['Date','Type','Description / Parties','Category','Amount (₹)',
     'Paid By / From','To','Note / Added By',
     ...members.map(m=>m+' Share (₹)')];
 
-  const rows = items.map(item => {
+  const rows = filtered.map(item => {
     if (item._t === 'expense') {
       const splits = item.splits || {};
       return [
@@ -2700,15 +2333,24 @@ function downloadHistoryExcel() {
   const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
   ws['!cols'] = [{wch:18},{wch:12},{wch:28},{wch:22},{wch:14},{wch:14},{wch:14},{wch:22},...members.map(()=>({wch:16}))];
   XLSX.utils.book_append_sheet(wb, ws, 'History');
+
+  const filters = [
+    catFilter?catFilter.replace(/^\S+\s/,''):'',
+    paidByFilter?'paid_'+paidByFilter:'',
+    inSplitFilter?'split_'+inSplitFilter:'',
+    repFromFilter?'from_'+repFromFilter:'',
+    repToFilter?'to_'+repToFilter:''
+  ].filter(Boolean).join('_') || 'All';
+
   const tripName = (currentGroup?.name||'TripSplit').replace(/\s+/g,'_');
-  XLSX.writeFile(wb, `${tripName}_History.xlsx`);
+  XLSX.writeFile(wb, `${tripName}_History_${filters}.xlsx`);
   toast('History downloaded!','ok');
 }
 
 async function gas(action, payload={}) {
   if (!GAS_URL) { toast('Apps Script URL not set','err'); throw new Error('No URL'); }
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 15000); // 15s timeout
+  const timer = setTimeout(() => ctrl.abort(), 15000);
   try {
     const res = await fetch(GAS_URL, {
       method:'POST',
